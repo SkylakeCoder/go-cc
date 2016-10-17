@@ -44,6 +44,16 @@ func (cb ChessBoard) visit(row, col int) *Chess {
 	return cb[row][col]
 }
 
+func (cb ChessBoard) getChessColor(row, col int) (ChessColor, bool) {
+	if row < 0 || row >= BOARD_ROW {
+		return COLOR_NULL, false
+	}
+	if col < 0 || col >= BOARD_COL {
+		return COLOR_NULL, false
+	}
+	return cb[row][col].Color, true
+}
+
 func (cb ChessBoard) dump() {
 	redChessNames := []string {
 		"车", "马", "炮",
