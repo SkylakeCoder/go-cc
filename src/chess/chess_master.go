@@ -5,8 +5,6 @@ import (
 	"os"
 )
 
-type ChessBoard [][]*Chess
-
 type ChessMaster struct {
 	chessBoard ChessBoard
 }
