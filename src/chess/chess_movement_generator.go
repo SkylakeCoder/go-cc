@@ -10,10 +10,8 @@ func NewChessMovementGenerator() *ChessMovementGenerator {
 
 func (cmg *ChessMovementGenerator) GenerateMoves(chessBoard ChessBoard, color ChessColor) []ChessBoard {
 	moves := []ChessBoard {}
-	carMoves := cmg.generateCarMoves(chessBoard, color)
-	for _, move := range carMoves {
-		moves = append(moves, move)
-	}
+	cmg.generateCarMoves(&moves, chessBoard, color)
+
 	return moves
 }
 
@@ -26,7 +24,7 @@ func (cmg *ChessMovementGenerator) generateCarMove(outResult *[]ChessBoard, ches
 		newChessBoard := chessBoard.clone()
 		newChess := newChessBoard[newRow][newCol]
 		newChess.Type = CHESS_CAR
-		newChess.Color = COLOR_RED
+		newChess.Color = selfColor
 		oldChess := newChessBoard[oldRow][oldCol]
 		oldChess.Type = CHESS_NULL
 		oldChess.Color = COLOR_NULL
@@ -40,30 +38,29 @@ func (cmg *ChessMovementGenerator) generateCarMove(outResult *[]ChessBoard, ches
 	return true
 }
 
- func (cmg *ChessMovementGenerator) generateCarMoves(chessBoard ChessBoard, color ChessColor) []ChessBoard {
-	result := []ChessBoard {}
+func (cmg *ChessMovementGenerator) generateCarMoves(outResult *[]ChessBoard, chessBoard ChessBoard, color ChessColor) {
 	rowCols := chessBoard.findTargetChessPosition(CHESS_CAR, color)
 	if color == COLOR_RED {
 		for i := 0; i < len(rowCols); i+=2 {
 			row := rowCols[i]
 			col := rowCols[i + 1]
 			for forward := row - 1; forward >= 0; forward-- {
-				if !cmg.generateCarMove(&result, chessBoard, forward, col, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, forward, col, row, col, color) {
 					break
 				}
 			}
 			for backward := row + 1; backward < BOARD_ROW; backward++ {
-				if !cmg.generateCarMove(&result, chessBoard, backward, col, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, backward, col, row, col, color) {
 					break
 				}
 			}
 			for leftward := col - 1; leftward >= 0; leftward-- {
-				if !cmg.generateCarMove(&result, chessBoard, row, leftward, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, row, leftward, row, col, color) {
 					break
 				}
 			}
 			for rightward := col + 1; rightward < BOARD_COL; rightward++ {
-				if !cmg.generateCarMove(&result, chessBoard, row, rightward, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, row, rightward, row, col, color) {
 					break
 				}
 			}
@@ -73,26 +70,26 @@ func (cmg *ChessMovementGenerator) generateCarMove(outResult *[]ChessBoard, ches
 			row := rowCols[i]
 			col := rowCols[i + 1]
 			for forward := row - 1; forward >= 0; forward-- {
-				if !cmg.generateCarMove(&result, chessBoard, forward, col, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, forward, col, row, col, color) {
 					break
 				}
 			}
 			for backward := row + 1; backward < BOARD_ROW; backward++ {
-				if !cmg.generateCarMove(&result, chessBoard, backward, col, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, backward, col, row, col, color) {
 					break
 				}
 			}
 			for leftward := col - 1; leftward >= 0; leftward-- {
-				if !cmg.generateCarMove(&result, chessBoard, row, leftward, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, row, leftward, row, col, color) {
 					break
 				}
 			}
 			for rightward := col + 1; rightward < BOARD_COL; rightward++ {
-				if !cmg.generateCarMove(&result, chessBoard, row, rightward, row, col, color) {
+				if !cmg.generateCarMove(outResult, chessBoard, row, rightward, row, col, color) {
 					break
 				}
 			}
 		}
 	}
-	return result
 }
+
