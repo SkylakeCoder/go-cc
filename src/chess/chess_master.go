@@ -95,7 +95,7 @@ func (cm *ChessMaster) Dump() {
 func (cm *ChessMaster) TestSomething() {
 	cm.Dump()
 	generator := NewChessMovementGenerator()
-	moves := generator.GenerateMoves(cm.chessBoard, COLOR_BLACK)
+	moves := generator.GenerateMoves(cm.chessBoard, COLOR_RED)
 	for _, board := range moves {
 		board.dump()
 	}

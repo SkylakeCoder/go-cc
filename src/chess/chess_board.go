@@ -34,6 +34,16 @@ func (cb ChessBoard) clone() ChessBoard {
 	return new
 }
 
+func (cb ChessBoard) visit(row, col int) *Chess {
+	if row < 0 || row >= BOARD_ROW {
+		return nil
+	}
+	if col < 0 || col >= BOARD_COL {
+		return nil
+	}
+	return cb[row][col]
+}
+
 func (cb ChessBoard) dump() {
 	redChessNames := []string {
 		"车", "马", "炮",
