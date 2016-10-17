@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"chess"
+)
 
 func main() {
-	fmt.Println("go-cc started...")
+	cm := chess.NewChessMaster()
+	cm.TestSomething()
 }
