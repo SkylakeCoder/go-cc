@@ -3,6 +3,7 @@ package chess
 import (
 	"log"
 	"os"
+	"fmt"
 )
 
 type ChessMaster struct {
@@ -94,9 +95,11 @@ func (cm *ChessMaster) Dump() {
 
 func (cm *ChessMaster) TestSomething() {
 	cm.Dump()
+	evaluator := NewChessBoardEvaluator()
 	generator := NewChessMovementGenerator()
 	moves := generator.GenerateMoves(cm.chessBoard, COLOR_RED)
 	for _, board := range moves {
 		board.dump()
+		fmt.Printf("eval-value=%d\n", evaluator.Eval(board))
 	}
 }
