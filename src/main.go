@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
-	cm := chess.NewChessMaster()
-	cm.TestSomething()
+	//cm := chess.NewChessMaster()
+	//cm.TestSomething()
+	chess.StartServer()
 }

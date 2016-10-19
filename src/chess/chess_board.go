@@ -54,6 +54,16 @@ func (cb ChessBoard) getChessColor(row, col int) (ChessColor, bool) {
 	return cb[row][col].Color, true
 }
 
+func (cb ChessBoard) string() string {
+	result := ""
+	for row := 0; row < BOARD_ROW; row++ {
+		for col := 0; col < BOARD_COL; col++ {
+			result += cb[row][col].String()
+		}
+	}
+	return result
+}
+
 func (cb ChessBoard) dump() {
 	redChessNames := []string {
 		"车", "马", "炮",
