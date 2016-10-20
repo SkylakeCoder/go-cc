@@ -72,7 +72,20 @@ func (cmg *ChessMovementGenerator) generateCarMoves(outResult *[]ChessBoard, che
 	}
 }
 
+func (cmg *ChessMovementGenerator) isRowColValid(row, col int) bool {
+	if row < 0 || row >= BOARD_ROW {
+		return false
+	}
+	if col < 0 || col >= BOARD_COL {
+		return false
+	}
+	return true
+}
+
 func (cmg *ChessMovementGenerator) generateHorseMove(outResult *[]ChessBoard, chessBoard ChessBoard, newRow, newCol, oldRow, oldCol int, color ChessColor) {
+	if !cmg.isRowColValid(newRow, newCol) {
+		return
+	}
 	newChessBoard := chessBoard.clone()
 	newChessBoard[newRow][newCol].Type = CHESS_HORSE
 	newChessBoard[newRow][newCol].Color = color

@@ -24,7 +24,7 @@ func (cbn *ChessBoardNode) AddChildValue(v int) {
 func (cbn *ChessBoardNode) GetScore() int {
 	var score int
 	if cbn.nodeType == NODE_TYPE_MAX {
-		score = 0
+		score = -1000000
 		for _, v := range cbn.childValues {
 			if v > score {
 				score = v

@@ -107,12 +107,11 @@ func (cm *ChessMaster) isAllWaitForEvalNode(nodes *MyList) bool {
 func (cm *ChessMaster) search(value string) string {
 	cm.LoadChessBoard(value)
 	cm.Dump()
-	currentColor := COLOR_BLACK
 	mainQueue := NewMyList()
 	waitForEvalQueue := NewMyList()
 	evaluator := NewChessBoardEvaluator()
 	generator := NewChessMovementGenerator()
-	moves := generator.GenerateMoves(cm.chessBoard, currentColor)
+	moves := generator.GenerateMoves(cm.chessBoard, COLOR_BLACK)
 	mainQueue.PushFrontSlice(cm.convertMoves(moves, nil, 1, NODE_TYPE_MIN))
 
 	for mainQueue.Len() > 0 {
@@ -120,14 +119,15 @@ func (cm *ChessMaster) search(value string) string {
 		if node.depth < DEPTH {
 			waitForEvalQueue.PushFront(node)
 			nodeType := NODE_TYPE_NULL
-			if currentColor == COLOR_BLACK {
-				currentColor = COLOR_RED
+			color := COLOR_NULL
+			if node.nodeType == NODE_TYPE_MIN {
 				nodeType = NODE_TYPE_MAX
+				color = COLOR_RED
 			} else {
-				currentColor = COLOR_BLACK
 				nodeType = NODE_TYPE_MIN
+				color = COLOR_BLACK
 			}
-			moves := generator.GenerateMoves(cm.chessBoard, currentColor)
+			moves := generator.GenerateMoves(node.chessBoard, color)
 			mainQueue.PushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
 		} else {
 			v := evaluator.Eval(node.chessBoard)
@@ -145,7 +145,7 @@ func (cm *ChessMaster) search(value string) string {
 			node.parent.AddChildValue(node.GetScore())
 		}
 	}
-	score := 0
+	score := -1000000
 	var targetNode *ChessBoardNode = nil
 	for waitForEvalQueue.Len() > 0 {
 		node := waitForEvalQueue.PopFront()
@@ -156,5 +156,8 @@ func (cm *ChessMaster) search(value string) string {
 		}
 	}
 
+	if targetNode == nil {
+		log.Fatalln("search targetNode == nil...")
+	}
 	return targetNode.chessBoard.string()
 }

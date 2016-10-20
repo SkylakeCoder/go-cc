@@ -8,7 +8,7 @@ type ChessBoardEvaluator struct {
 
 var chessPieceValueMap = map[ChessType]int {
 	CHESS_NULL: 0,
-	CHESS_CAR: 90,
+	CHESS_CAR: 100,
 	CHESS_HORSE: 40,
 	CHESS_CANNON: 45,
 	CHESS_ELEPHANT: 20,
