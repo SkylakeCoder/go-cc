@@ -4,7 +4,7 @@ import "log"
 
 type NodeType byte
 const (
-	NODE_TYPE_NULL = iota
+	NODE_TYPE_NULL NodeType = iota
 	NODE_TYPE_MAX
 	NODE_TYPE_MIN
 )

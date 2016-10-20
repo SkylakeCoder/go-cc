@@ -9,14 +9,18 @@ import (
 const (
 	START_COUNT = 10
 )
+
 var requestCount = 0
+var chessMaster *ChessMaster = nil
 
 func StartServer() {
+	chessMaster = NewChessMaster()
 	http.HandleFunc("/", handleRequest)
 	log.Fatalln(http.ListenAndServe("localhost:8686", nil))
 }
 
 func handleRequest(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	requestCount++
 	chess := req.FormValue("chess")
 	needMaster := false
@@ -39,6 +43,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 		needMaster = true
 	}
 	if needMaster {
-		//@TODO...
+		result := chessMaster.Search(chess)
+		w.Write([]byte(result))
 	}
 }

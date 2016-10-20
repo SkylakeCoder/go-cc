@@ -1,7 +1,5 @@
 package chess
 
-import "log"
-
 type ChessMovementGenerator struct {
 
 }
@@ -19,7 +17,7 @@ func (cmg *ChessMovementGenerator) GenerateMoves(chessBoard ChessBoard, color Ch
 	cmg.generateGuardMoves(&moves, chessBoard, color)
 	cmg.generateKingMoves(&moves, chessBoard, color)
 	cmg.generatePawnMoves(&moves, chessBoard, color)
-	log.Printf("moves count: %d\n", len(moves))
+
 	return moves
 }
 
