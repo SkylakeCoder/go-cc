@@ -193,27 +193,32 @@ func NewChessBoardEvaluator() *ChessBoardEvaluator {
 }
 
 func (cbe *ChessBoardEvaluator) Eval(chessBoard ChessBoard) int {
-	return cbe.evalChessPieceValue(chessBoard) +
-		   cbe.evalChessPositionValue(chessBoard)
+	return cbe.evalValue(chessBoard, COLOR_BLACK) - cbe.evalValue(chessBoard, COLOR_RED)
 }
 
-func (cbe *ChessBoardEvaluator) evalChessPieceValue(chessBoard ChessBoard) int {
+func (cbe *ChessBoardEvaluator) evalValue(chessBoard ChessBoard, color ChessColor) int {
+	return cbe.evalPieceValue(chessBoard, color) + cbe.evalPositionValue(chessBoard, color)
+}
+
+func (cbe *ChessBoardEvaluator) evalPieceValue(chessBoard ChessBoard, color ChessColor) int {
 	result := 0
 	for row := 0; row < BOARD_ROW; row++ {
 		for col := 0; col < BOARD_COL; col++ {
 			chess := chessBoard[row][col]
-			result += chessPieceValueMap[chess.Type]
+			if chess.Color == color {
+				result += chessPieceValueMap[chess.Type]
+			}
 		}
 	}
 	return result
 }
 
-func (cbe *ChessBoardEvaluator) evalChessPositionValue(chessBoard ChessBoard) int {
+func (cbe *ChessBoardEvaluator) evalPositionValue(chessBoard ChessBoard, color ChessColor) int {
 	result := 0
 	for row := 0; row < BOARD_ROW; row++ {
 		for col := 0; col < BOARD_COL; col++ {
 			chess := chessBoard[row][col]
-			if chess.Type != CHESS_NULL {
+			if chess.Type != CHESS_NULL && chess.Color == color {
 				result += chessPiecePositionValueMap[chess.String()][row][col]
 			}
 		}
