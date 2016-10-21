@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	DEPTH = 3
+	DEPTH = 4
 )
 
 type ChessMaster struct {
@@ -83,9 +83,8 @@ func (cm *ChessMaster) convertMoves(moves []ChessBoard, parentNode *ChessBoardNo
 			chessBoard: v,
 			parent: parentNode,
 			depth: depth,
-			childValues: []int {},
-			nodeType: nodeType,
 		}
+		node.SetNodeType(nodeType)
 		nodes = append(nodes, node)
 	}
 	return nodes
@@ -131,7 +130,7 @@ func (cm *ChessMaster) search(value string) string {
 			mainQueue.PushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
 		} else {
 			v := evaluator.Eval(node.chessBoard)
-			node.parent.AddChildValue(v)
+			node.parent.SetValue(v)
 		}
 	}
 	for waitForEvalQueue.Len() > 0 {
@@ -142,14 +141,14 @@ func (cm *ChessMaster) search(value string) string {
 		if node.parent == nil {
 			waitForEvalQueue.PushBack(node)
 		} else {
-			node.parent.AddChildValue(node.GetScore())
+			node.parent.SetValue(node.GetValue())
 		}
 	}
 	score := -1000000
 	var targetNode *ChessBoardNode = nil
 	for waitForEvalQueue.Len() > 0 {
 		node := waitForEvalQueue.PopFront()
-		nodeScore := node.GetScore()
+		nodeScore := node.GetValue()
 		if nodeScore > score {
 			score = nodeScore
 			targetNode = node
