@@ -14,7 +14,6 @@ type ChessBoardNode struct {
 	parent *ChessBoardNode
 	depth int
 	value int
-	value int
 	nodeType NodeType
 }
 
