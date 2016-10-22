@@ -16,7 +16,12 @@ var chessMaster *ChessMaster = nil
 func StartServer() {
 	chessMaster = NewChessMaster()
 	http.HandleFunc("/", handleRequest)
+	http.HandleFunc("/reset", onReset)
 	log.Fatalln(http.ListenAndServe("localhost:8686", nil))
+}
+
+func ResetServer() {
+	requestCount = 0
 }
 
 func handleRequest(w http.ResponseWriter, req *http.Request) {
@@ -46,4 +51,8 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 		result := chessMaster.Search(chess)
 		w.Write([]byte(result))
 	}
+}
+
+func onReset(_ http.ResponseWriter, _ *http.Request) {
+	ResetServer()
 }
