@@ -20,9 +20,9 @@ type ChessBoardNode struct {
 func (cbn *ChessBoardNode) SetNodeType(nodeType NodeType) {
 	cbn.nodeType = nodeType
 	if nodeType == NODE_TYPE_MAX {
-		cbn.value = -1000000
+		cbn.value = MIN_VALUE
 	} else {
-		cbn.value = 1000000
+		cbn.value = MAX_VALUE
 	}
 }
 

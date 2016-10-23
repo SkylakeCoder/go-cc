@@ -144,7 +144,7 @@ func (cm *ChessMaster) search(value string) string {
 			node.parent.SetValue(node.GetValue())
 		}
 	}
-	score := -1000000
+	score := MIN_VALUE
 	var targetNode *ChessBoardNode = nil
 	for waitForEvalQueue.Len() > 0 {
 		node := waitForEvalQueue.PopFront()

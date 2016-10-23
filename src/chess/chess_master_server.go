@@ -53,6 +53,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func onReset(_ http.ResponseWriter, _ *http.Request) {
+func onReset(w http.ResponseWriter, _ *http.Request) {
 	ResetServer()
+	w.Write([]byte("reset success!"))
 }

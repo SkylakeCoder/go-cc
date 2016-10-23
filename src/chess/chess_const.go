@@ -24,3 +24,8 @@ const (
 	COLOR_RED
 	COLOR_BLACK
 )
+
+const (
+	MIN_VALUE = -1000000
+	MAX_VALUE = 1000000
+)
