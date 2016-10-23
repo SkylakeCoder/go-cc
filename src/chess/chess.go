@@ -1,12 +1,10 @@
 package chess
 
-import "fmt"
-
 type chess struct {
 	_type chessType
 	color chessColor
 }
 
 func (c *chess) string() string {
-	return fmt.Sprintf("%d%d", c._type, c.color)
+	return _CHESS_TYPE_ARRAY[c._type] + _CHESS_COLOR_ARRAY[c.color]
 }

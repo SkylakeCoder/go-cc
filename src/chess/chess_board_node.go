@@ -1,7 +1,5 @@
 package chess
 
-import "log"
-
 type nodeType byte
 const (
 	_NODE_TYPE_NULL nodeType = iota
@@ -15,6 +13,8 @@ type chessBoardNode struct {
 	depth      int
 	value      int
 	nodeType   nodeType
+	children []*chessBoardNode
+	discard bool
 }
 
 func (cbn *chessBoardNode) setNodeType(nodeType nodeType) {
@@ -31,12 +31,28 @@ func (cbn *chessBoardNode) setValue(v int) {
 		if v > cbn.value {
 			cbn.value = v
 		}
-	} else if cbn.nodeType == _NODE_TYPE_MIN {
+	} else {
 		if v < cbn.value {
 			cbn.value = v
 		}
-	} else {
-		log.Fatalln("wrong node type...")
+	}
+	if cbn.parent != nil {
+		brothers := cbn.parent.children
+		if cbn.parent.nodeType == _NODE_TYPE_MIN {
+			for _, v := range brothers {
+				if v.value < cbn.value {
+					v.discard = true
+					break
+				}
+			}
+		} else {
+			for _, v := range brothers {
+				if v.value > cbn.value {
+					v.discard = true
+					break
+				}
+			}
+		}
 	}
 }
 
@@ -44,3 +60,13 @@ func (cbn *chessBoardNode) getValue() int {
 	return cbn.value
 }
 
+func (cbn *chessBoardNode) isDiscard() bool {
+	temp := cbn
+	for temp != nil {
+		if temp.discard {
+			return true
+		}
+		temp = temp.parent
+	}
+	return false
+}

@@ -81,7 +81,11 @@ func (cm *chessMaster) convertMoves(moves []chessBoard, parentNode *chessBoardNo
 			depth: depth,
 		}
 		node.setNodeType(nodeType)
+		node.discard = false
 		nodes = append(nodes, node)
+	}
+	if parentNode != nil {
+		parentNode.children = nodes
 	}
 	return nodes
 }
@@ -112,6 +116,9 @@ func (cm *chessMaster) search(value string) string {
 	for mainQueue.Len() > 0 {
 		node := mainQueue.popFront()
 		if node.depth < _DEPTH {
+			if node.isDiscard() {
+				continue
+			}
 			waitForEvalQueue.PushFront(node)
 			nodeType := _NODE_TYPE_NULL
 			color := _COLOR_NULL
@@ -134,6 +141,9 @@ func (cm *chessMaster) search(value string) string {
 			break
 		}
 		node := waitForEvalQueue.popFront()
+		if node.isDiscard() {
+			continue
+		}
 		if node.parent == nil {
 			waitForEvalQueue.PushBack(node)
 		} else {

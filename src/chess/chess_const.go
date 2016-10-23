@@ -25,6 +25,9 @@ const (
 	_COLOR_BLACK
 )
 
+var _CHESS_TYPE_ARRAY = []string { "0", "1", "2", "3", "4", "5", "6", "7" }
+var _CHESS_COLOR_ARRAY = []string { "0", "1", "2" }
+
 const (
 	_MIN_VALUE = -1000000
 	_MAX_VALUE = 1000000
