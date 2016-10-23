@@ -86,6 +86,10 @@ func (cmg *chessMovementGenerator) generateHorseMove(outResult *[]chessBoard, bo
 	if !cmg.isRowColValid(newRow, newCol) {
 		return
 	}
+	if board[oldRow][oldCol]._type != _CHESS_NULL &&
+		board[oldRow][oldCol].color == color {
+		return
+	}
 	newChessBoard := board.clone()
 	newChessBoard[newRow][newCol]._type = _CHESS_HORSE
 	newChessBoard[newRow][newCol].color = color
