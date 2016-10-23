@@ -1,31 +1,31 @@
 package chess
 
-type ChessType byte
-type ChessColor byte
+type chessType byte
+type chessColor byte
 
 const (
-	BOARD_ROW int = 10
-	BOARD_COL int = 9
+	_BOARD_ROW int = 10
+	_BOARD_COL int = 9
 )
 
 const (
-	CHESS_NULL ChessType = iota
-	CHESS_CAR
-	CHESS_HORSE
-	CHESS_CANNON
-	CHESS_ELEPHANT
-	CHESS_GUARD
-	CHESS_KING
-	CHESS_PAWN
+	_CHESS_NULL chessType = iota
+	_CHESS_CAR
+	_CHESS_HORSE
+	_CHESS_CANNON
+	_CHESS_ELEPHANT
+	_CHESS_GUARD
+	_CHESS_KING
+	_CHESS_PAWN
 )
 
 const (
-	COLOR_NULL ChessColor = iota
-	COLOR_RED
-	COLOR_BLACK
+	_COLOR_NULL chessColor = iota
+	_COLOR_RED
+	_COLOR_BLACK
 )
 
 const (
-	MIN_VALUE = -1000000
-	MAX_VALUE = 1000000
+	_MIN_VALUE = -1000000
+	_MAX_VALUE = 1000000
 )

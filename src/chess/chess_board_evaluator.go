@@ -2,23 +2,23 @@ package chess
 
 import "fmt"
 
-type ChessBoardEvaluator struct {
+type chessBoardEvaluator struct {
 
 }
 
-var chessPieceValueMap = map[ChessType]int {
-	CHESS_NULL: 0,
-	CHESS_CAR: 100,
-	CHESS_HORSE: 40,
-	CHESS_CANNON: 45,
-	CHESS_ELEPHANT: 20,
-	CHESS_GUARD: 20,
-	CHESS_KING: 1000,
-	CHESS_PAWN: 10,
+var chessPieceValueMap = map[chessType]int {
+	_CHESS_NULL: 0,
+	_CHESS_CAR: 100,
+	_CHESS_HORSE: 40,
+	_CHESS_CANNON: 45,
+	_CHESS_ELEPHANT: 20,
+	_CHESS_GUARD: 20,
+	_CHESS_KING: 1000,
+	_CHESS_PAWN: 10,
 }
 
 var chessPiecePositionValueMap = map[string][][]int {
-	fmt.Sprintf("%d%d", CHESS_CAR, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_CAR, _COLOR_RED): {
 		{ 160, 170, 160, 150, 150, 150, 160, 170, 160 },
 		{ 170, 180, 170, 190, 250, 190, 170, 180, 170 },
 		{ 170, 190, 200, 220, 240, 220, 200, 190, 170 },
@@ -30,7 +30,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 160, 170, 160, 160, 150, 160, 160, 170, 160 },
 		{ 150, 160, 150, 160, 150, 160, 150, 160, 150 },
 	},
-	fmt.Sprintf("%d%d", CHESS_HORSE, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_HORSE, _COLOR_RED): {
 		{ 70, 80,  90,  80,  70,  80,  90,  80,  70 },
 		{ 80, 110, 125, 90,  70,  90,  125, 110, 80 },
 		{ 90, 100, 120, 125, 120, 125, 120, 100, 90 },
@@ -42,7 +42,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 70, 75,  75,  70,  50,  70,  75,  75,  70 },
 		{ 60, 70,  75,  70,  60,  70,  75,  70,  60 },
 	},
-	fmt.Sprintf("%d%d", CHESS_CANNON, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_CANNON, _COLOR_RED): {
 		{ 125, 130, 100, 70, 60, 70, 100, 130, 125 },
 		{ 110, 125, 100, 70, 60, 70, 100, 125, 110 },
 		{ 100, 120, 90,  80, 80, 80, 90,  120, 100 },
@@ -54,7 +54,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 80, 90, 80, 70, 65, 70, 80, 90, 80 },
 		{ 80, 90, 80, 70, 60, 70, 80, 90, 80 },
 	},
-	fmt.Sprintf("%d%d", CHESS_ELEPHANT, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_ELEPHANT, _COLOR_RED): {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -66,7 +66,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 30, 0, 0, 0, 30, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_GUARD, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_GUARD, _COLOR_RED): {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -78,7 +78,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 22, 0, 0, 0, 0 },
 		{ 0, 0, 0, 30, 0, 30, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_KING, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_KING, _COLOR_RED): {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -90,7 +90,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 10, 10, 10, 0, 0, 0 },
 		{ 0, 0, 0, 15, 20, 15, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_PAWN, COLOR_RED): {
+	fmt.Sprintf("%d%d", _CHESS_PAWN, _COLOR_RED): {
 		{ 10, 10, 10, 20, 25, 20, 10, 10, 10 },
 		{ 25, 30, 40, 50, 60, 50, 40, 30, 25 },
 		{ 25, 30, 30, 40, 40, 40, 30, 30, 25 },
@@ -102,7 +102,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_CAR, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_CAR, _COLOR_BLACK): {
 		{ 150, 160, 150, 160, 150, 160, 150, 160, 150 },
 		{ 160, 170, 160, 160, 150, 160, 160, 170, 160 },
 		{ 170, 180, 170, 170, 160, 170, 170, 180, 170 },
@@ -114,7 +114,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 170, 180, 170, 190, 250, 190, 170, 180, 170 },
 		{ 160, 170, 160, 150, 150, 150, 160, 170, 160 },
 	},
-	fmt.Sprintf("%d%d", CHESS_HORSE, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_HORSE, _COLOR_BLACK): {
 		{ 60, 70,  75,  70,  60,  70,  75,  70,  60 },
 		{ 70, 75,  75,  70,  50,  70,  75,  75,  70 },
 		{ 80, 80,  90,  90,  80,  90,  90,  80,  80 },
@@ -126,7 +126,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 80, 110, 125, 90,  70,  90,  125, 110, 80 },
 		{ 70, 80,  90,  80,  70,  80,  90,  80,  70 },
 	},
-	fmt.Sprintf("%d%d", CHESS_CANNON, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_CANNON, _COLOR_BLACK): {
 		{ 80, 90, 80, 70, 60, 70, 80, 90, 80 },
 		{ 80, 90, 80, 70, 65, 70, 80, 90, 80 },
 		{ 90,  100, 80, 80,  70,  80,  80, 100, 90 },
@@ -138,7 +138,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 110, 125, 100, 70, 60, 70, 100, 125, 110 },
 		{ 125, 130, 100, 70, 60, 70, 100, 130, 125 },
 	},
-	fmt.Sprintf("%d%d", CHESS_ELEPHANT, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_ELEPHANT, _COLOR_BLACK): {
 		{ 0, 0, 30, 0, 0, 0, 30, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 20, 0, 0, 0, 35, 0, 0, 0, 20 },
@@ -150,7 +150,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_GUARD, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_GUARD, _COLOR_BLACK): {
 		{ 0, 0, 0, 30, 0, 30, 0, 0, 0 },
 		{ 0, 0, 0, 0, 22, 0, 0, 0, 0 },
 		{ 0, 0, 0, 30, 0, 30, 0, 0, 0 },
@@ -162,7 +162,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_KING, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_KING, _COLOR_BLACK): {
 		{ 0, 0, 0, 15, 20, 15, 0, 0, 0 },
 		{ 0, 0, 0, 10, 10, 10, 0, 0, 0 },
 		{ 0, 0, 0, 1, 1, 1, 0, 0, 0 },
@@ -174,7 +174,7 @@ var chessPiecePositionValueMap = map[string][][]int {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	},
-	fmt.Sprintf("%d%d", CHESS_PAWN, COLOR_BLACK): {
+	fmt.Sprintf("%d%d", _CHESS_PAWN, _COLOR_BLACK): {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -188,38 +188,38 @@ var chessPiecePositionValueMap = map[string][][]int {
 	},
 }
 
-func NewChessBoardEvaluator() *ChessBoardEvaluator {
-	return &ChessBoardEvaluator{}
+func newChessBoardEvaluator() *chessBoardEvaluator {
+	return &chessBoardEvaluator{}
 }
 
-func (cbe *ChessBoardEvaluator) Eval(chessBoard ChessBoard) int {
-	return cbe.evalValue(chessBoard, COLOR_BLACK) - cbe.evalValue(chessBoard, COLOR_RED)
+func (cbe *chessBoardEvaluator) eval(chessBoard chessBoard) int {
+	return cbe.evalValue(chessBoard, _COLOR_BLACK) - cbe.evalValue(chessBoard, _COLOR_RED)
 }
 
-func (cbe *ChessBoardEvaluator) evalValue(chessBoard ChessBoard, color ChessColor) int {
+func (cbe *chessBoardEvaluator) evalValue(chessBoard chessBoard, color chessColor) int {
 	return cbe.evalPieceValue(chessBoard, color) + cbe.evalPositionValue(chessBoard, color)
 }
 
-func (cbe *ChessBoardEvaluator) evalPieceValue(chessBoard ChessBoard, color ChessColor) int {
+func (cbe *chessBoardEvaluator) evalPieceValue(chessBoard chessBoard, color chessColor) int {
 	result := 0
-	for row := 0; row < BOARD_ROW; row++ {
-		for col := 0; col < BOARD_COL; col++ {
+	for row := 0; row < _BOARD_ROW; row++ {
+		for col := 0; col < _BOARD_COL; col++ {
 			chess := chessBoard[row][col]
-			if chess.Color == color {
-				result += chessPieceValueMap[chess.Type]
+			if chess.color == color {
+				result += chessPieceValueMap[chess._type]
 			}
 		}
 	}
 	return result
 }
 
-func (cbe *ChessBoardEvaluator) evalPositionValue(chessBoard ChessBoard, color ChessColor) int {
+func (cbe *chessBoardEvaluator) evalPositionValue(chessBoard chessBoard, color chessColor) int {
 	result := 0
-	for row := 0; row < BOARD_ROW; row++ {
-		for col := 0; col < BOARD_COL; col++ {
+	for row := 0; row < _BOARD_ROW; row++ {
+		for col := 0; col < _BOARD_COL; col++ {
 			chess := chessBoard[row][col]
-			if chess.Type != CHESS_NULL && chess.Color == color {
-				result += chessPiecePositionValueMap[chess.String()][row][col]
+			if chess._type != _CHESS_NULL && chess.color == color {
+				result += chessPiecePositionValueMap[chess.string()][row][col]
 			}
 		}
 	}

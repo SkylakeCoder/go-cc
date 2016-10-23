@@ -7,14 +7,14 @@ import (
 )
 
 const (
-	START_COUNT = 10
+	_START_COUNT = 10
 )
 
 var requestCount = 0
-var chessMaster *ChessMaster = nil
+var master *chessMaster = nil
 
 func StartServer() {
-	chessMaster = NewChessMaster()
+	master = newChessMaster()
 	http.HandleFunc("/", handleRequest)
 	http.HandleFunc("/reset", onReset)
 	log.Fatalln(http.ListenAndServe("localhost:8686", nil))
@@ -29,7 +29,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 	requestCount++
 	chess := req.FormValue("chess")
 	needMaster := false
-	if requestCount <= START_COUNT {
+	if requestCount <= _START_COUNT {
 		resp, err := http.Get("http://localhost:8688?chess=" + chess)
 		if err != nil {
 			log.Fatalln("error when communicate with repository server...")
@@ -48,7 +48,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 		needMaster = true
 	}
 	if needMaster {
-		result := chessMaster.Search(chess)
+		result := master.search(chess)
 		w.Write([]byte(result))
 	}
 }

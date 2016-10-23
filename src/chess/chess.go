@@ -2,11 +2,11 @@ package chess
 
 import "fmt"
 
-type Chess struct {
-	Type ChessType
-	Color ChessColor
+type chess struct {
+	_type chessType
+	color chessColor
 }
 
-func (c *Chess) String() string {
-	return fmt.Sprintf("%d%d", c.Type, c.Color)
+func (c *chess) string() string {
+	return fmt.Sprintf("%d%d", c._type, c.color)
 }

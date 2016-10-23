@@ -2,36 +2,36 @@ package chess
 
 import "log"
 
-type NodeType byte
+type nodeType byte
 const (
-	NODE_TYPE_NULL NodeType = iota
-	NODE_TYPE_MAX
-	NODE_TYPE_MIN
+	_NODE_TYPE_NULL nodeType = iota
+	_NODE_TYPE_MAX
+	_NODE_TYPE_MIN
 )
 
-type ChessBoardNode struct {
-	chessBoard ChessBoard
-	parent *ChessBoardNode
-	depth int
-	value int
-	nodeType NodeType
+type chessBoardNode struct {
+	chessBoard chessBoard
+	parent     *chessBoardNode
+	depth      int
+	value      int
+	nodeType   nodeType
 }
 
-func (cbn *ChessBoardNode) SetNodeType(nodeType NodeType) {
+func (cbn *chessBoardNode) setNodeType(nodeType nodeType) {
 	cbn.nodeType = nodeType
-	if nodeType == NODE_TYPE_MAX {
-		cbn.value = MIN_VALUE
+	if nodeType == _NODE_TYPE_MAX {
+		cbn.value = _MIN_VALUE
 	} else {
-		cbn.value = MAX_VALUE
+		cbn.value = _MAX_VALUE
 	}
 }
 
-func (cbn *ChessBoardNode) SetValue(v int) {
-	if cbn.nodeType == NODE_TYPE_MAX {
+func (cbn *chessBoardNode) setValue(v int) {
+	if cbn.nodeType == _NODE_TYPE_MAX {
 		if v > cbn.value {
 			cbn.value = v
 		}
-	} else if cbn.nodeType == NODE_TYPE_MIN {
+	} else if cbn.nodeType == _NODE_TYPE_MIN {
 		if v < cbn.value {
 			cbn.value = v
 		}
@@ -40,7 +40,7 @@ func (cbn *ChessBoardNode) SetValue(v int) {
 	}
 }
 
-func (cbn *ChessBoardNode) GetValue() int {
+func (cbn *chessBoardNode) getValue() int {
 	return cbn.value
 }
 

@@ -7,20 +7,20 @@ import (
 )
 
 const (
-	DEPTH = 4
+	_DEPTH = 4
 )
 
-type ChessMaster struct {
-	chessBoard ChessBoard
+type chessMaster struct {
+	chessBoard chessBoard
 }
 
-func NewChessMaster() *ChessMaster {
-	cm := &ChessMaster {}
-	cm.InitChessBoard()
+func newChessMaster() *chessMaster {
+	cm := &chessMaster{}
+	cm.initChessBoard()
 	return cm
 }
 
-func (cm *ChessMaster) InitChessBoard() {
+func (cm *chessMaster) initChessBoard() {
 	initBoard := [][]byte {
 		{ 2, 1, 2, 2, 2, 4, 2, 5, 2, 6, 2, 5, 2, 4, 2, 2, 2, 1 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -33,66 +33,62 @@ func (cm *ChessMaster) InitChessBoard() {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 1, 1, 1, 2, 1, 4, 1, 5, 1, 6, 1, 5, 1, 4, 1, 2, 1, 1 },
 	}
-	cm.chessBoard = [][]*Chess {}
-	for row := 0; row < BOARD_ROW; row++ {
-		cols := []*Chess {}
-		for col := 0; col < BOARD_COL * 2; col+=2 {
-			cols = append(cols, &Chess { Type: ChessType(initBoard[row][col + 1]), Color: ChessColor(initBoard[row][col]) })
+	cm.chessBoard = [][]*chess{}
+	for row := 0; row < _BOARD_ROW; row++ {
+		cols := []*chess{}
+		for col := 0; col < _BOARD_COL * 2; col+=2 {
+			cols = append(cols, &chess{ _type: chessType(initBoard[row][col + 1]), color: chessColor(initBoard[row][col]) })
 		}
 		cm.chessBoard = append(cm.chessBoard, cols)
 	}
 }
 
-func (cm *ChessMaster) LoadChessBoard(value string) {
+func (cm *chessMaster) loadChessBoard(value string) {
 	if len(value) % 2 != 0 {
 		log.Fatalln("error when LoadChessBoard...")
 		os.Exit(1)
 	}
-	cm.chessBoard = [][]*Chess {}
-	for row := 0; row < BOARD_ROW; row++ {
-		cols := []*Chess {}
-		for col := 0; col < BOARD_COL; col++ {
-			cols = append(cols, &Chess { Type: CHESS_NULL, Color: COLOR_NULL })
+	cm.chessBoard = [][]*chess{}
+	for row := 0; row < _BOARD_ROW; row++ {
+		cols := []*chess{}
+		for col := 0; col < _BOARD_COL; col++ {
+			cols = append(cols, &chess{ _type: _CHESS_NULL, color: _COLOR_NULL })
 		}
 		cm.chessBoard = append(cm.chessBoard, cols)
 	}
 	idx := 0
 	for i := 0; i < len(value); i+=2 {
-		row := idx / BOARD_COL
-		col := idx % BOARD_COL
+		row := idx / _BOARD_COL
+		col := idx % _BOARD_COL
 		t, _ := strconv.Atoi(string(value[i]))
 		c, _ := strconv.Atoi(string(value[i + 1]))
-		cm.chessBoard[row][col].Type = ChessType(t)
-		cm.chessBoard[row][col].Color = ChessColor(c)
+		cm.chessBoard[row][col]._type = chessType(t)
+		cm.chessBoard[row][col].color = chessColor(c)
 		idx++
 	}
 }
 
-func (cm *ChessMaster) Dump() {
+func (cm *chessMaster) dump() {
 	cm.chessBoard.dump()
 }
 
-func (cm *ChessMaster) Search(value string) string {
-	return cm.search(value)
-}
-
-func (cm *ChessMaster) convertMoves(moves []ChessBoard, parentNode *ChessBoardNode, depth int, nodeType NodeType) []*ChessBoardNode {
-	nodes := []*ChessBoardNode {}
+func (cm *chessMaster) convertMoves(moves []chessBoard, parentNode *chessBoardNode, depth int, nodeType nodeType) []*chessBoardNode {
+	nodes := []*chessBoardNode{}
 	for _, v := range moves {
-		node := &ChessBoardNode {
+		node := &chessBoardNode{
 			chessBoard: v,
 			parent: parentNode,
 			depth: depth,
 		}
-		node.SetNodeType(nodeType)
+		node.setNodeType(nodeType)
 		nodes = append(nodes, node)
 	}
 	return nodes
 }
 
-func (cm *ChessMaster) isAllWaitForEvalNode(nodes *MyList) bool {
+func (cm *chessMaster) isAllWaitForEvalNode(nodes *myList) bool {
 	for e := nodes.Front(); e != nil; e = e.Next() {
-		node, ok := e.Value.(*ChessBoardNode)
+		node, ok := e.Value.(*chessBoardNode)
 		if !ok {
 			log.Fatalln("wrong type in MyList...")
 		}
@@ -103,52 +99,52 @@ func (cm *ChessMaster) isAllWaitForEvalNode(nodes *MyList) bool {
 	return true
 }
 
-func (cm *ChessMaster) search(value string) string {
-	cm.LoadChessBoard(value)
-	cm.Dump()
-	mainQueue := NewMyList()
-	waitForEvalQueue := NewMyList()
-	evaluator := NewChessBoardEvaluator()
-	generator := NewChessMovementGenerator()
-	moves := generator.GenerateMoves(cm.chessBoard, COLOR_BLACK)
-	mainQueue.PushFrontSlice(cm.convertMoves(moves, nil, 1, NODE_TYPE_MIN))
+func (cm *chessMaster) search(value string) string {
+	cm.loadChessBoard(value)
+	cm.dump()
+	mainQueue := newMyList()
+	waitForEvalQueue := newMyList()
+	evaluator := newChessBoardEvaluator()
+	generator := newChessMovementGenerator()
+	moves := generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
+	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
 
 	for mainQueue.Len() > 0 {
-		node := mainQueue.PopFront()
-		if node.depth < DEPTH {
+		node := mainQueue.popFront()
+		if node.depth < _DEPTH {
 			waitForEvalQueue.PushFront(node)
-			nodeType := NODE_TYPE_NULL
-			color := COLOR_NULL
-			if node.nodeType == NODE_TYPE_MIN {
-				nodeType = NODE_TYPE_MAX
-				color = COLOR_RED
+			nodeType := _NODE_TYPE_NULL
+			color := _COLOR_NULL
+			if node.nodeType == _NODE_TYPE_MIN {
+				nodeType = _NODE_TYPE_MAX
+				color = _COLOR_RED
 			} else {
-				nodeType = NODE_TYPE_MIN
-				color = COLOR_BLACK
+				nodeType = _NODE_TYPE_MIN
+				color = _COLOR_BLACK
 			}
-			moves := generator.GenerateMoves(node.chessBoard, color)
-			mainQueue.PushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
+			moves := generator.generateMoves(node.chessBoard, color)
+			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
 		} else {
-			v := evaluator.Eval(node.chessBoard)
-			node.parent.SetValue(v)
+			v := evaluator.eval(node.chessBoard)
+			node.parent.setValue(v)
 		}
 	}
 	for waitForEvalQueue.Len() > 0 {
 		if cm.isAllWaitForEvalNode(waitForEvalQueue) {
 			break
 		}
-		node := waitForEvalQueue.PopFront()
+		node := waitForEvalQueue.popFront()
 		if node.parent == nil {
 			waitForEvalQueue.PushBack(node)
 		} else {
-			node.parent.SetValue(node.GetValue())
+			node.parent.setValue(node.getValue())
 		}
 	}
-	score := MIN_VALUE
-	var targetNode *ChessBoardNode = nil
+	score := _MIN_VALUE
+	var targetNode *chessBoardNode = nil
 	for waitForEvalQueue.Len() > 0 {
-		node := waitForEvalQueue.PopFront()
-		nodeScore := node.GetValue()
+		node := waitForEvalQueue.popFront()
+		nodeScore := node.getValue()
 		if nodeScore > score {
 			score = nodeScore
 			targetNode = node

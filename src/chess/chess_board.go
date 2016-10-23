@@ -4,13 +4,13 @@ import (
 	"fmt"
 )
 
-type ChessBoard [][]*Chess
+type chessBoard [][]*chess
 
-func (cb ChessBoard) findTargetChessPosition(t ChessType, c ChessColor) []int {
+func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int {
 	result := []int {}
-	for row := 0; row < BOARD_ROW; row++ {
-		for col := 0; col < BOARD_COL; col++ {
-			if cb[row][col].Type == t && cb[row][col].Color == c {
+	for row := 0; row < _BOARD_ROW; row++ {
+		for col := 0; col < _BOARD_COL; col++ {
+			if cb[row][col]._type == t && cb[row][col].color == c {
 				result = append(result, row, col)
 			}
 		}
@@ -18,15 +18,15 @@ func (cb ChessBoard) findTargetChessPosition(t ChessType, c ChessColor) []int {
 	return result
 }
 
-func (cb ChessBoard) clone() ChessBoard {
-	new := ChessBoard {}
-	for row := 0; row < BOARD_ROW; row++ {
-		cols := []*Chess {}
-		for col := 0; col < BOARD_COL; col++ {
+func (cb chessBoard) clone() chessBoard {
+	new := chessBoard{}
+	for row := 0; row < _BOARD_ROW; row++ {
+		cols := []*chess{}
+		for col := 0; col < _BOARD_COL; col++ {
 			oldChess := cb[row][col]
-			cols = append(cols, &Chess {
-				Type: oldChess.Type,
-				Color: oldChess.Color,
+			cols = append(cols, &chess{
+				_type: oldChess._type,
+				color: oldChess.color,
 			})
 		}
 		new = append(new, cols)
@@ -34,37 +34,37 @@ func (cb ChessBoard) clone() ChessBoard {
 	return new
 }
 
-func (cb ChessBoard) visit(row, col int) *Chess {
-	if row < 0 || row >= BOARD_ROW {
+func (cb chessBoard) visit(row, col int) *chess {
+	if row < 0 || row >= _BOARD_ROW {
 		return nil
 	}
-	if col < 0 || col >= BOARD_COL {
+	if col < 0 || col >= _BOARD_COL {
 		return nil
 	}
 	return cb[row][col]
 }
 
-func (cb ChessBoard) getChessColor(row, col int) (ChessColor, bool) {
-	if row < 0 || row >= BOARD_ROW {
-		return COLOR_NULL, false
+func (cb chessBoard) getChessColor(row, col int) (chessColor, bool) {
+	if row < 0 || row >= _BOARD_ROW {
+		return _COLOR_NULL, false
 	}
-	if col < 0 || col >= BOARD_COL {
-		return COLOR_NULL, false
+	if col < 0 || col >= _BOARD_COL {
+		return _COLOR_NULL, false
 	}
-	return cb[row][col].Color, true
+	return cb[row][col].color, true
 }
 
-func (cb ChessBoard) string() string {
+func (cb chessBoard) string() string {
 	result := ""
-	for row := 0; row < BOARD_ROW; row++ {
-		for col := 0; col < BOARD_COL; col++ {
-			result += cb[row][col].String()
+	for row := 0; row < _BOARD_ROW; row++ {
+		for col := 0; col < _BOARD_COL; col++ {
+			result += cb[row][col].string()
 		}
 	}
 	return result
 }
 
-func (cb ChessBoard) dump() {
+func (cb chessBoard) dump() {
 	redChessNames := []string {
 		"车", "马", "炮",
 		"相", "仕", "帅",
@@ -76,17 +76,17 @@ func (cb ChessBoard) dump() {
 		"卒",
 	}
 	fmt.Println("---------------------------------")
-	for row := 0; row < BOARD_ROW; row++ {
-		for col := 0; col < BOARD_COL; col++ {
+	for row := 0; row < _BOARD_ROW; row++ {
+		for col := 0; col < _BOARD_COL; col++ {
 			chess := cb[row][col]
-			if chess.Type == CHESS_NULL {
+			if chess._type == _CHESS_NULL {
 				fmt.Print("　")
 			} else {
 				name := ""
-				if chess.Color == COLOR_RED {
-					name = redChessNames[chess.Type - 1]
+				if chess.color == _COLOR_RED {
+					name = redChessNames[chess._type - 1]
 				} else {
-					name = blackChessNames[chess.Type - 1]
+					name = blackChessNames[chess._type - 1]
 				}
 				fmt.Print(name)
 			}
