@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
@@ -106,6 +107,7 @@ func (cm *chessMaster) isAllWaitForEvalNode(nodes *myList) bool {
 }
 
 func (cm *chessMaster) search(value string) string {
+	st := time.Now()
 	cm.loadChessBoard(value)
 	cm.dump()
 	mainQueue := newMyList()
@@ -166,5 +168,6 @@ func (cm *chessMaster) search(value string) string {
 	if targetNode == nil {
 		log.Fatalln("search targetNode == nil...")
 	}
+	log.Printf("time cost: %f s", time.Since(st).Seconds())
 	return targetNode.getCurrentChessBoard().string()
 }
