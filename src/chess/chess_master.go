@@ -114,7 +114,9 @@ func (cm *chessMaster) search(value string) string {
 	waitForEvalQueue := newMyList()
 	evaluator := newChessBoardEvaluator()
 	generator := newChessMovementGenerator()
-	moves := generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
+	moves := make([]move, 100)
+	moves = moves[:0]
+	moves = generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
 	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, cm.chessBoard, 1, _NODE_TYPE_MIN))
 
 	for mainQueue.Len() > 0 {
@@ -133,7 +135,8 @@ func (cm *chessMaster) search(value string) string {
 				nodeType = _NODE_TYPE_MIN
 				color = _COLOR_BLACK
 			}
-			moves := generator.generateMoves(node.getCurrentChessBoard(), color)
+			moves = moves[:0]
+			moves = generator.generateMoves(node.getCurrentChessBoard(), color)
 			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, nil, node.depth + 1, nodeType))
 		} else {
 			v := evaluator.eval(node.getCurrentChessBoard())

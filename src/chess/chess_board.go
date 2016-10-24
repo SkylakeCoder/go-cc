@@ -5,23 +5,23 @@ import (
 )
 
 type chessBoard [][]*chess
+var _chessPositionResult = make([]int8, 10)
+var _cloneBoard = make(chessBoard, 10)
 
 func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
-	result := make([]int8, 10)
-	result = result[:0]
+	_chessPositionResult = _chessPositionResult[:0]
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			if cb[row][col]._type == t && cb[row][col].color == c {
-				result = append(result, int8(row), int8(col))
+				_chessPositionResult = append(_chessPositionResult, int8(row), int8(col))
 			}
 		}
 	}
-	return result
+	return _chessPositionResult
 }
 
 func (cb chessBoard) clone() chessBoard {
-	newBoard := make(chessBoard, 10)
-	newBoard = newBoard[:0]
+	_cloneBoard = _cloneBoard[:0]
 	for row := 0; row < _BOARD_ROW; row++ {
 		cols := make([]*chess, 9)
 		cols = cols[:0]
@@ -32,9 +32,9 @@ func (cb chessBoard) clone() chessBoard {
 				color: oldChess.color,
 			})
 		}
-		newBoard = append(newBoard, cols)
+		_cloneBoard = append(_cloneBoard, cols)
 	}
-	return newBoard
+	return _cloneBoard
 }
 
 func (cb chessBoard) visit(row, col int8) *chess {

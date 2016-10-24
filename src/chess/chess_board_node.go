@@ -24,18 +24,19 @@ type chessBoardNode struct {
 	discard  bool
 }
 
+var _tempMoves = make([]move, 10)
 func (cbn *chessBoardNode) getCurrentChessBoard() chessBoard {
-	moves := []move {}
+	_tempMoves = _tempMoves[:0]
 	parentNode := cbn
 	var topNode *chessBoardNode
 	for parentNode != nil {
 		topNode = parentNode
-		moves = append(moves, parentNode.move)
+		_tempMoves = append(_tempMoves, parentNode.move)
 		parentNode = parentNode.parent
 	}
 	board := topNode.board.clone()
-	for i := len(moves) - 1; i >= 0; i-- {
-		move := moves[i]
+	for i := len(_tempMoves) - 1; i >= 0; i-- {
+		move := _tempMoves[i]
 		newRow, newCol := move.newRow, move.newCol
 		oldRow, oldCol := move.oldRow, move.oldCol
 		chess := move.chess

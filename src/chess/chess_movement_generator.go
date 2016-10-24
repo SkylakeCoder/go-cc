@@ -8,18 +8,18 @@ func newChessMovementGenerator() *chessMovementGenerator {
 	return &chessMovementGenerator{}
 }
 
+var _tempMoveResult = make([]move, 100)
 func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessColor) []move {
-	moves := make([]move, 100)
-	moves = moves[:0]
-	cmg.generateCarMoves(&moves, board, color)
-	cmg.generateHorseMoves(&moves, board, color)
-	cmg.generateCannonMoves(&moves, board, color)
-	cmg.generateElephantMoves(&moves, board, color)
-	cmg.generateGuardMoves(&moves, board, color)
-	cmg.generateKingMoves(&moves, board, color)
-	cmg.generatePawnMoves(&moves, board, color)
+	_tempMoveResult = _tempMoveResult[:0]
+	cmg.generateCarMoves(&_tempMoveResult, board, color)
+	cmg.generateHorseMoves(&_tempMoveResult, board, color)
+	cmg.generateCannonMoves(&_tempMoveResult, board, color)
+	cmg.generateElephantMoves(&_tempMoveResult, board, color)
+	cmg.generateGuardMoves(&_tempMoveResult, board, color)
+	cmg.generateKingMoves(&_tempMoveResult, board, color)
+	cmg.generatePawnMoves(&_tempMoveResult, board, color)
 
-	return moves
+	return _tempMoveResult
 }
 
 func (cmg *chessMovementGenerator) generateCarMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, selfColor chessColor) bool {
