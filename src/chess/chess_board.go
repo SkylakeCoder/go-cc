@@ -5,8 +5,23 @@ import (
 )
 
 type chessBoard [][]*chess
+
 var _chessPositionResult = make([]int8, 10)
-var _cloneBoard = make(chessBoard, 10)
+var _cloneBoard chessBoard
+
+func init() {
+	_cloneBoard = chessBoard{}
+	for row := 0; row < _BOARD_ROW; row++ {
+		cols := []*chess {}
+		for col := 0; col < _BOARD_COL; col++ {
+			cols = append(cols, &chess {
+				_type: _CHESS_NULL,
+				color: _COLOR_NULL,
+			})
+		}
+		_cloneBoard = append(_cloneBoard, cols)
+	}
+}
 
 func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
 	_chessPositionResult = _chessPositionResult[:0]
@@ -21,18 +36,12 @@ func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
 }
 
 func (cb chessBoard) clone() chessBoard {
-	_cloneBoard = _cloneBoard[:0]
 	for row := 0; row < _BOARD_ROW; row++ {
-		cols := make([]*chess, 9)
-		cols = cols[:0]
 		for col := 0; col < _BOARD_COL; col++ {
 			oldChess := cb[row][col]
-			cols = append(cols, &chess{
-				_type: oldChess._type,
-				color: oldChess.color,
-			})
+			_cloneBoard[row][col]._type = oldChess._type
+			_cloneBoard[row][col].color = oldChess.color
 		}
-		_cloneBoard = append(_cloneBoard, cols)
 	}
 	return _cloneBoard
 }
