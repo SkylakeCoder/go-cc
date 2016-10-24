@@ -7,16 +7,14 @@ import (
 	"time"
 )
 
-const (
-	_DEPTH = 4
-)
-
 type chessMaster struct {
 	chessBoard chessBoard
+	depth int8
 }
 
-func newChessMaster() *chessMaster {
+func newChessMaster(depth int8) *chessMaster {
 	cm := &chessMaster{}
+	cm.depth = depth
 	cm.initChessBoard()
 	return cm
 }
@@ -121,7 +119,7 @@ func (cm *chessMaster) search(value string) string {
 
 	for mainQueue.Len() > 0 {
 		node := mainQueue.popFront()
-		if node.depth < _DEPTH {
+		if node.depth < cm.depth {
 			if node.isDiscard() {
 				continue
 			}

@@ -13,8 +13,8 @@ const (
 var requestCount = 0
 var master *chessMaster = nil
 
-func StartServer() {
-	master = newChessMaster()
+func StartServer(depth int8) {
+	master = newChessMaster(depth)
 	http.HandleFunc("/", handleRequest)
 	http.HandleFunc("/reset", onReset)
 	log.Fatalln(http.ListenAndServe("localhost:8686", nil))
