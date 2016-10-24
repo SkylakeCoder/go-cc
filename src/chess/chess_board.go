@@ -7,7 +7,8 @@ import (
 type chessBoard [][]*chess
 
 func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
-	result := []int8 {}
+	result := make([]int8, 10)
+	result = result[:0]
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			if cb[row][col]._type == t && cb[row][col].color == c {
@@ -19,9 +20,11 @@ func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
 }
 
 func (cb chessBoard) clone() chessBoard {
-	new := chessBoard{}
+	newBoard := make(chessBoard, 10)
+	newBoard = newBoard[:0]
 	for row := 0; row < _BOARD_ROW; row++ {
-		cols := []*chess{}
+		cols := make([]*chess, 9)
+		cols = cols[:0]
 		for col := 0; col < _BOARD_COL; col++ {
 			oldChess := cb[row][col]
 			cols = append(cols, &chess{
@@ -29,9 +32,9 @@ func (cb chessBoard) clone() chessBoard {
 				color: oldChess.color,
 			})
 		}
-		new = append(new, cols)
+		newBoard = append(newBoard, cols)
 	}
-	return new
+	return newBoard
 }
 
 func (cb chessBoard) visit(row, col int8) *chess {

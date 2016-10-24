@@ -9,7 +9,8 @@ func newChessMovementGenerator() *chessMovementGenerator {
 }
 
 func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessColor) []move {
-	moves := []move{}
+	moves := make([]move, 100)
+	moves = moves[:0]
 	cmg.generateCarMoves(&moves, board, color)
 	cmg.generateHorseMoves(&moves, board, color)
 	cmg.generateCannonMoves(&moves, board, color)

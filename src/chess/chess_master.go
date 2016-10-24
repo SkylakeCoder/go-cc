@@ -73,7 +73,8 @@ func (cm *chessMaster) dump() {
 }
 
 func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, board chessBoard, depth int8, nodeType nodeType) []*chessBoardNode {
-	nodes := []*chessBoardNode{}
+	nodes := make([]*chessBoardNode, 100)
+	nodes = nodes[:0]
 	for _, v := range moves {
 		node := &chessBoardNode{
 			board: board,
