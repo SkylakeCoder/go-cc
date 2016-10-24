@@ -31,10 +31,8 @@ func (cmg *chessMovementGenerator) generateCarMove(outResult *[]move, board ches
 		*outResult = append(*outResult, move {
 			newRow: newRow, newCol: newCol,
 			oldRow: oldRow, oldCol: oldCol,
-			chess: chess {
-				_type: _CHESS_CAR,
-				color: selfColor,
-			},
+			_type: _CHESS_CAR,
+			color: selfColor,
 		})
 		if cType != _CHESS_NULL && cColor != selfColor {
 			return false
@@ -92,10 +90,8 @@ func (cmg *chessMovementGenerator) generateHorseMove(outResult *[]move, board ch
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_HORSE,
-			color: color,
-		},
+		_type: _CHESS_HORSE,
+		color: color,
 	})
 }
 
@@ -131,10 +127,8 @@ func (cmg *chessMovementGenerator) generateCannonMove(outResult *[]move, board c
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_CANNON,
-			color: color,
-		},
+		_type: _CHESS_CANNON,
+		color: color,
 	})
 }
 
@@ -231,10 +225,8 @@ func (cmg *chessMovementGenerator) generateElephantMove(outResult *[]move, board
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_ELEPHANT,
-			color: color,
-		},
+		_type: _CHESS_ELEPHANT,
+		color: color,
 	})
 }
 
@@ -278,10 +270,8 @@ func (cmg *chessMovementGenerator) generateGuardMove(outResult *[]move, board ch
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_GUARD,
-			color: color,
-		},
+		_type: _CHESS_GUARD,
+		color: color,
 	})
 }
 
@@ -321,10 +311,8 @@ func (cmg *chessMovementGenerator) generateKingMove(outResult *[]move, board che
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_KING,
-			color: color,
-		},
+		_type: _CHESS_KING,
+		color: color,
 	})
 }
 
@@ -352,10 +340,8 @@ func (cmg *chessMovementGenerator) generatePawnMove(outResult *[]move, board che
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
-		chess: chess {
-			_type: _CHESS_PAWN,
-			color: color,
-		},
+		_type: _CHESS_PAWN,
+		color: color,
 	})
 }
 

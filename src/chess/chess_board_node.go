@@ -10,7 +10,8 @@ const (
 type move struct {
 	oldRow, oldCol int8
 	newRow, newCol int8
-	chess chess
+	_type chessType
+	color chessColor
 }
 
 type chessBoardNode struct {
@@ -39,9 +40,8 @@ func (cbn *chessBoardNode) getCurrentChessBoard() chessBoard {
 		move := _tempMoves[i]
 		newRow, newCol := move.newRow, move.newCol
 		oldRow, oldCol := move.oldRow, move.oldCol
-		chess := move.chess
-		board[newRow][newCol]._type = chess._type
-		board[newRow][newCol].color = chess.color
+		board[newRow][newCol]._type = move._type
+		board[newRow][newCol].color = move.color
 		board[oldRow][oldCol]._type = _CHESS_NULL
 		board[oldRow][oldCol].color = _COLOR_NULL
 	}
