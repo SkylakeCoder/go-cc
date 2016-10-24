@@ -72,11 +72,12 @@ func (cm *chessMaster) dump() {
 	cm.chessBoard.dump()
 }
 
-func (cm *chessMaster) convertMoves(moves []chessBoard, parentNode *chessBoardNode, depth int, nodeType nodeType) []*chessBoardNode {
+func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, board chessBoard, depth int8, nodeType nodeType) []*chessBoardNode {
 	nodes := []*chessBoardNode{}
 	for _, v := range moves {
 		node := &chessBoardNode{
-			chessBoard: v,
+			board: board,
+			move: v,
 			parent: parentNode,
 			depth: depth,
 		}
@@ -111,7 +112,7 @@ func (cm *chessMaster) search(value string) string {
 	evaluator := newChessBoardEvaluator()
 	generator := newChessMovementGenerator()
 	moves := generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
-	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
+	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, cm.chessBoard, 1, _NODE_TYPE_MIN))
 
 	for mainQueue.Len() > 0 {
 		node := mainQueue.popFront()
@@ -129,10 +130,10 @@ func (cm *chessMaster) search(value string) string {
 				nodeType = _NODE_TYPE_MIN
 				color = _COLOR_BLACK
 			}
-			moves := generator.generateMoves(node.chessBoard, color)
-			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
+			moves := generator.generateMoves(node.getCurrentChessBoard(), color)
+			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, nil, node.depth + 1, nodeType))
 		} else {
-			v := evaluator.eval(node.chessBoard)
+			v := evaluator.eval(node.getCurrentChessBoard())
 			node.parent.setValue(v)
 		}
 	}
@@ -164,5 +165,5 @@ func (cm *chessMaster) search(value string) string {
 	if targetNode == nil {
 		log.Fatalln("search targetNode == nil...")
 	}
-	return targetNode.chessBoard.string()
+	return targetNode.getCurrentChessBoard().string()
 }

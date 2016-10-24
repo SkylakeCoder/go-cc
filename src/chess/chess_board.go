@@ -6,12 +6,12 @@ import (
 
 type chessBoard [][]*chess
 
-func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int {
-	result := []int {}
+func (cb chessBoard) findTargetChessPosition(t chessType, c chessColor) []int8 {
+	result := []int8 {}
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			if cb[row][col]._type == t && cb[row][col].color == c {
-				result = append(result, row, col)
+				result = append(result, int8(row), int8(col))
 			}
 		}
 	}
@@ -34,21 +34,21 @@ func (cb chessBoard) clone() chessBoard {
 	return new
 }
 
-func (cb chessBoard) visit(row, col int) *chess {
-	if row < 0 || row >= _BOARD_ROW {
+func (cb chessBoard) visit(row, col int8) *chess {
+	if row < 0 || row >= int8(_BOARD_ROW) {
 		return nil
 	}
-	if col < 0 || col >= _BOARD_COL {
+	if col < 0 || col >= int8(_BOARD_COL) {
 		return nil
 	}
 	return cb[row][col]
 }
 
-func (cb chessBoard) getChessColor(row, col int) (chessColor, bool) {
-	if row < 0 || row >= _BOARD_ROW {
+func (cb chessBoard) getChessColor(row, col int8) (chessColor, bool) {
+	if row < 0 || row >= int8(_BOARD_ROW) {
 		return _COLOR_NULL, false
 	}
-	if col < 0 || col >= _BOARD_COL {
+	if col < 0 || col >= int8(_BOARD_COL) {
 		return _COLOR_NULL, false
 	}
 	return cb[row][col].color, true

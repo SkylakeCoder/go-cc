@@ -8,8 +8,8 @@ func newChessMovementGenerator() *chessMovementGenerator {
 	return &chessMovementGenerator{}
 }
 
-func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessColor) []chessBoard {
-	moves := []chessBoard{}
+func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessColor) []move {
+	moves := []move{}
 	cmg.generateCarMoves(&moves, board, color)
 	cmg.generateHorseMoves(&moves, board, color)
 	cmg.generateCannonMoves(&moves, board, color)
@@ -21,22 +21,20 @@ func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessCo
 	return moves
 }
 
-func (cmg *chessMovementGenerator) generateCarMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, selfColor chessColor) bool {
+func (cmg *chessMovementGenerator) generateCarMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, selfColor chessColor) bool {
 	cType := board[newRow][newCol]._type
 	cColor := board[newRow][newCol].color
 	if cColor == selfColor {
 		return false
 	} else if cType == _CHESS_NULL || cColor != selfColor {
-		newChessBoard := board.clone()
-		newChess := newChessBoard[newRow][newCol]
-		newChess._type = _CHESS_CAR
-		newChess.color = selfColor
-		oldChess := newChessBoard[oldRow][oldCol]
-		oldChess._type = _CHESS_NULL
-		oldChess.color = _COLOR_NULL
-
-		*outResult = append(*outResult, newChessBoard)
-
+		*outResult = append(*outResult, move {
+			newRow: newRow, newCol: newCol,
+			oldRow: oldRow, oldCol: oldCol,
+			chess: chess {
+				_type: _CHESS_CAR,
+				color: selfColor,
+			},
+		})
 		if cType != _CHESS_NULL && cColor != selfColor {
 			return false
 		}
@@ -44,7 +42,7 @@ func (cmg *chessMovementGenerator) generateCarMove(outResult *[]chessBoard, boar
 	return true
 }
 
-func (cmg *chessMovementGenerator) generateCarMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateCarMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_CAR, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -54,7 +52,7 @@ func (cmg *chessMovementGenerator) generateCarMoves(outResult *[]chessBoard, boa
 				break
 			}
 		}
-		for backward := row + 1; backward < _BOARD_ROW; backward++ {
+		for backward := row + 1; backward < int8(_BOARD_ROW); backward++ {
 			if !cmg.generateCarMove(outResult, board, backward, col, row, col, color) {
 				break
 			}
@@ -64,7 +62,7 @@ func (cmg *chessMovementGenerator) generateCarMoves(outResult *[]chessBoard, boa
 				break
 			}
 		}
-		for rightward := col + 1; rightward < _BOARD_COL; rightward++ {
+		for rightward := col + 1; rightward < int8(_BOARD_COL); rightward++ {
 			if !cmg.generateCarMove(outResult, board, row, rightward, row, col, color) {
 				break
 			}
@@ -72,17 +70,17 @@ func (cmg *chessMovementGenerator) generateCarMoves(outResult *[]chessBoard, boa
 	}
 }
 
-func (cmg *chessMovementGenerator) isRowColValid(row, col int) bool {
-	if row < 0 || row >= _BOARD_ROW {
+func (cmg *chessMovementGenerator) isRowColValid(row, col int8) bool {
+	if row < 0 || row >= int8(_BOARD_ROW) {
 		return false
 	}
-	if col < 0 || col >= _BOARD_COL {
+	if col < 0 || col >= int8(_BOARD_COL) {
 		return false
 	}
 	return true
 }
 
-func (cmg *chessMovementGenerator) generateHorseMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
+func (cmg *chessMovementGenerator) generateHorseMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
 	if !cmg.isRowColValid(newRow, newCol) {
 		return
 	}
@@ -90,15 +88,17 @@ func (cmg *chessMovementGenerator) generateHorseMove(outResult *[]chessBoard, bo
 		board[newRow][newCol].color == color {
 		return
 	}
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_HORSE
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_HORSE,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generateHorseMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateHorseMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_HORSE, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -126,16 +126,18 @@ func (cmg *chessMovementGenerator) generateHorseMoves(outResult *[]chessBoard, b
 	}
 }
 
-func (cmg *chessMovementGenerator) generateCannonMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_CANNON
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+func (cmg *chessMovementGenerator) generateCannonMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_CANNON,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generateCannonMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateCannonMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_CANNON, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -159,7 +161,7 @@ func (cmg *chessMovementGenerator) generateCannonMoves(outResult *[]chessBoard, 
 			}
 		}
 		hasMeetAChess = false
-		for backward := row + 1; backward < _BOARD_ROW; backward++ {
+		for backward := row + 1; backward < int8(_BOARD_ROW); backward++ {
 			chess := board[backward][col]
 			if chess._type == _CHESS_NULL {
 				if !hasMeetAChess {
@@ -195,7 +197,7 @@ func (cmg *chessMovementGenerator) generateCannonMoves(outResult *[]chessBoard, 
 			}
 		}
 		hasMeetAChess = false
-		for rightward := col + 1; rightward < _BOARD_COL; rightward++ {
+		for rightward := col + 1; rightward < int8(_BOARD_COL); rightward++ {
 			chess := board[row][rightward]
 			if chess._type == _CHESS_NULL {
 				if !hasMeetAChess {
@@ -215,7 +217,7 @@ func (cmg *chessMovementGenerator) generateCannonMoves(outResult *[]chessBoard, 
 	}
 }
 
-func (cmg *chessMovementGenerator) generateElephantMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
+func (cmg *chessMovementGenerator) generateElephantMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
 	if color == _COLOR_RED {
 		if newRow < 5 {
 			return
@@ -225,15 +227,17 @@ func (cmg *chessMovementGenerator) generateElephantMove(outResult *[]chessBoard,
 			return
 		}
 	}
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_ELEPHANT
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_ELEPHANT,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generateElephantMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateElephantMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_ELEPHANT, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -257,7 +261,7 @@ func (cmg *chessMovementGenerator) generateElephantMoves(outResult *[]chessBoard
 	}
 }
 
-func (cmg *chessMovementGenerator) generateGuardMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
+func (cmg *chessMovementGenerator) generateGuardMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
 	if newCol < 3 || newCol > 5 {
 		return
 	}
@@ -270,15 +274,17 @@ func (cmg *chessMovementGenerator) generateGuardMove(outResult *[]chessBoard, bo
 			return
 		}
 	}
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_GUARD
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_GUARD,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generateGuardMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateGuardMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_GUARD, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -298,7 +304,7 @@ func (cmg *chessMovementGenerator) generateGuardMoves(outResult *[]chessBoard, b
 	}
 }
 
-func (cmg *chessMovementGenerator) generateKingMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
+func (cmg *chessMovementGenerator) generateKingMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
 	if newCol < 3 || newCol > 5 {
 		return
 	}
@@ -311,15 +317,17 @@ func (cmg *chessMovementGenerator) generateKingMove(outResult *[]chessBoard, boa
 			return
 		}
 	}
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_KING
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_KING,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generateKingMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generateKingMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_KING, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]
@@ -339,16 +347,18 @@ func (cmg *chessMovementGenerator) generateKingMoves(outResult *[]chessBoard, bo
 	}
 }
 
-func (cmg *chessMovementGenerator) generatePawnMove(outResult *[]chessBoard, board chessBoard, newRow, newCol, oldRow, oldCol int, color chessColor) {
-	newChessBoard := board.clone()
-	newChessBoard[newRow][newCol]._type = _CHESS_PAWN
-	newChessBoard[newRow][newCol].color = color
-	newChessBoard[oldRow][oldCol]._type = _CHESS_NULL
-	newChessBoard[oldRow][oldCol].color = _COLOR_NULL
-	*outResult = append(*outResult, newChessBoard)
+func (cmg *chessMovementGenerator) generatePawnMove(outResult *[]move, board chessBoard, newRow, newCol, oldRow, oldCol int8, color chessColor) {
+	*outResult = append(*outResult, move {
+		newRow: newRow, newCol: newCol,
+		oldRow: oldRow, oldCol: oldCol,
+		chess: chess {
+			_type: _CHESS_PAWN,
+			color: color,
+		},
+	})
 }
 
-func (cmg *chessMovementGenerator) generatePawnMoves(outResult *[]chessBoard, board chessBoard, color chessColor) {
+func (cmg *chessMovementGenerator) generatePawnMoves(outResult *[]move, board chessBoard, color chessColor) {
 	rowCols := board.findTargetChessPosition(_CHESS_PAWN, color)
 	for i := 0; i < len(rowCols); i+=2 {
 		row := rowCols[i]

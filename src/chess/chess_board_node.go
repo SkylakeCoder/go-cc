@@ -7,14 +7,44 @@ const (
 	_NODE_TYPE_MIN
 )
 
+type move struct {
+	oldRow, oldCol int8
+	newRow, newCol int8
+	chess chess
+}
+
 type chessBoardNode struct {
-	chessBoard chessBoard
-	parent     *chessBoardNode
-	depth      int
-	value      int
-	nodeType   nodeType
+	board    chessBoard
+	parent   *chessBoardNode
+	move     move
+	depth    int8
+	value    int
+	nodeType nodeType
 	children []*chessBoardNode
-	discard bool
+	discard  bool
+}
+
+func (cbn *chessBoardNode) getCurrentChessBoard() chessBoard {
+	moves := []move {}
+	parentNode := cbn
+	var topNode *chessBoardNode
+	for parentNode != nil {
+		topNode = parentNode
+		moves = append(moves, parentNode.move)
+		parentNode = parentNode.parent
+	}
+	board := topNode.board.clone()
+	for i := len(moves) - 1; i >= 0; i-- {
+		move := moves[i]
+		newRow, newCol := move.newRow, move.newCol
+		oldRow, oldCol := move.oldRow, move.oldCol
+		chess := move.chess
+		board[newRow][newCol]._type = chess._type
+		board[newRow][newCol].color = chess.color
+		board[oldRow][oldCol]._type = _CHESS_NULL
+		board[oldRow][oldCol].color = _COLOR_NULL
+	}
+	return board
 }
 
 func (cbn *chessBoardNode) setNodeType(nodeType nodeType) {
