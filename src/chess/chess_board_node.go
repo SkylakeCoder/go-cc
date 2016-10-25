@@ -72,14 +72,14 @@ func (cbn *chessBoardNode) setValue(v int) {
 		if cbn.parent.nodeType == _NODE_TYPE_MIN {
 			for _, v := range brothers {
 				if v.value < cbn.value {
-					v.discard = true
+					cbn.discard = true
 					break
 				}
 			}
 		} else {
 			for _, v := range brothers {
 				if v.value > cbn.value {
-					v.discard = true
+					cbn.discard = true
 					break
 				}
 			}
