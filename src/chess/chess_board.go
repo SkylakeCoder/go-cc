@@ -76,7 +76,8 @@ func (cb chessBoard) string() string {
 	return result
 }
 
-func (cb chessBoard) dump() {
+func (cb chessBoard) dumpString() string {
+	result := ""
 	redChessNames := []string {
 		"车", "马", "炮",
 		"相", "仕", "帅",
@@ -87,12 +88,12 @@ func (cb chessBoard) dump() {
 		"象", "士", "將",
 		"卒",
 	}
-	fmt.Println("---------------------------------")
+	result += "---------------------------------\n"
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			chess := cb[row][col]
 			if chess._type == _CHESS_NULL {
-				fmt.Print("　")
+				result += "　"
 			} else {
 				name := ""
 				if chess.color == _COLOR_RED {
@@ -100,10 +101,15 @@ func (cb chessBoard) dump() {
 				} else {
 					name = blackChessNames[chess._type - 1]
 				}
-				fmt.Print(name)
+				result += name
 			}
 		}
-		fmt.Println()
+		result += "\n"
 	}
-	fmt.Println("---------------------------------")
+	result += "---------------------------------\n"
+	return result
+}
+
+func (cb chessBoard) dump() {
+	fmt.Print(cb.dumpString())
 }
