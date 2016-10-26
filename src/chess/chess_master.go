@@ -117,11 +117,15 @@ func (cm *chessMaster) search(value string) string {
 	moves = generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
 	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, cm.chessBoard, 1, _NODE_TYPE_MIN))
 	clipCount := 0
+	anotherClipCount := 0
 
 	for mainQueue.Len() > 0 {
 		node := mainQueue.popFront()
 		if node.isDiscard() {
 			clipCount++
+			if node.depth < cm.depth {
+				anotherClipCount++
+			}
 			continue
 		}
 		if node.depth < cm.depth {
@@ -168,6 +172,6 @@ func (cm *chessMaster) search(value string) string {
 	if targetNode == nil {
 		log.Fatalln("search targetNode == nil...")
 	}
-	log.Printf("depth: %d, clip: %d, time cost: %f s", cm.depth, clipCount, time.Since(st).Seconds())
+	log.Printf("depth: %d, clip1: %d, clip2: %d, time cost: %f s", cm.depth, clipCount, anotherClipCount, time.Since(st).Seconds())
 	return targetNode.getCurrentChessBoard().string()
 }

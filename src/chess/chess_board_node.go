@@ -23,6 +23,7 @@ type chessBoardNode struct {
 	nodeType nodeType
 	children []*chessBoardNode
 	discard  bool
+	setValueCount int
 }
 
 var _tempMoves = make([]move, 10)
@@ -58,30 +59,39 @@ func (cbn *chessBoardNode) setNodeType(nodeType nodeType) {
 }
 
 func (cbn *chessBoardNode) setValue(v int) {
+	cbn.setValueCount++
+	isValidValue := false
 	if cbn.nodeType == _NODE_TYPE_MAX {
 		if v > cbn.value {
 			cbn.value = v
+			isValidValue = true
 		}
 	} else {
 		if v < cbn.value {
 			cbn.value = v
+			isValidValue = true
 		}
 	}
-	if cbn.parent != nil {
+	if isValidValue && cbn.parent != nil {
 		brothers := cbn.parent.children
 		if cbn.parent.nodeType == _NODE_TYPE_MIN {
 			for _, v := range brothers {
-				if v.value < cbn.value {
+				if v.value != _MIN_VALUE && v.value < cbn.value {
 					cbn.discard = true
 					break
 				}
 			}
 		} else {
 			for _, v := range brothers {
-				if v.value > cbn.value {
+				if v.value != _MAX_VALUE && v.value > cbn.value {
 					cbn.discard = true
 					break
 				}
+			}
+		}
+		if cbn.setValueCount >= len(cbn.children) || cbn.discard {
+			if cbn.parent.parent != nil {
+				cbn.parent.setValue(v)
 			}
 		}
 	}

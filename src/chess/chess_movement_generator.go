@@ -14,10 +14,10 @@ func (cmg *chessMovementGenerator) generateMoves(board chessBoard, color chessCo
 	cmg.generateCarMoves(&_tempMoveResult, board, color)
 	cmg.generateHorseMoves(&_tempMoveResult, board, color)
 	cmg.generateCannonMoves(&_tempMoveResult, board, color)
+	cmg.generatePawnMoves(&_tempMoveResult, board, color)
 	cmg.generateElephantMoves(&_tempMoveResult, board, color)
 	cmg.generateGuardMoves(&_tempMoveResult, board, color)
 	cmg.generateKingMoves(&_tempMoveResult, board, color)
-	cmg.generatePawnMoves(&_tempMoveResult, board, color)
 
 	return _tempMoveResult
 }
