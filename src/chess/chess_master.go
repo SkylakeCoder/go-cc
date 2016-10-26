@@ -172,6 +172,6 @@ func (cm *chessMaster) search(value string) string {
 	if targetNode == nil {
 		log.Fatalln("search targetNode == nil...")
 	}
-	log.Printf("depth: %d, clip1: %d, clip2: %d, time cost: %f s", cm.depth, clipCount, anotherClipCount, time.Since(st).Seconds())
+	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f s", cm.depth, clipCount, anotherClipCount, targetNode.value, time.Since(st).Seconds())
 	return targetNode.getCurrentChessBoard().string()
 }

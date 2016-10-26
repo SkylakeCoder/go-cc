@@ -222,6 +222,10 @@ func (cmg *chessMovementGenerator) generateElephantMove(outResult *[]move, board
 			return
 		}
 	}
+	newChess := board[newRow][newCol]
+	if newChess.color == color {
+		return
+	}
 	*outResult = append(*outResult, move {
 		newRow: newRow, newCol: newCol,
 		oldRow: oldRow, oldCol: oldCol,
