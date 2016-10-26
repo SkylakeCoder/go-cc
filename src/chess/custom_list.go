@@ -14,8 +14,8 @@ func newMyList() *myList {
 }
 
 func (ml *myList) pushFrontSlice(slice []*chessBoardNode) {
-	for _, v := range slice {
-		ml.PushFront(v)
+	for i := len(slice) - 1; i >= 0; i-- {
+		ml.PushFront(slice[i])
 	}
 }
 
