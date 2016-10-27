@@ -26,6 +26,34 @@ type chessBoardNode struct {
 	setValueCount int
 }
 
+var _chessBoardNodePool *myList = newMyList()
+const _POOL_INCREASE_NUM = 1000
+var _getNodeNum = 0
+var _returnNodeNum = 0
+
+func getChessBoardNode() *chessBoardNode {
+	_getNodeNum++
+	if _chessBoardNodePool.Len() <= 0 {
+		for i := 0; i < _POOL_INCREASE_NUM; i++ {
+			node := &chessBoardNode {}
+			_chessBoardNodePool.PushBack(node)
+		}
+	}
+	return _chessBoardNodePool.popFront()
+}
+
+func returnChessBoardNode(node *chessBoardNode) {
+	_returnNodeNum++
+	node.setValueCount = 0
+	node.discard = false
+	node.children = []*chessBoardNode {}
+	_chessBoardNodePool.PushBack(node)
+}
+
+func clearChessBoardNodeCounter() {
+	_getNodeNum, _returnNodeNum = 0, 0
+}
+
 var _tempMoves = make([]move, 10)
 func (cbn *chessBoardNode) getCurrentChessBoard() chessBoard {
 	_tempMoves = _tempMoves[:0]

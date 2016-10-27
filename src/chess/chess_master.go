@@ -75,12 +75,11 @@ func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, bo
 	nodes := make([]*chessBoardNode, 100)
 	nodes = nodes[:0]
 	for _, v := range moves {
-		node := &chessBoardNode{
-			board: board,
-			move: v,
-			parent: parentNode,
-			depth: depth,
-		}
+		node := getChessBoardNode()
+		node.board = board
+		node.move = v
+		node.parent = parentNode
+		node.depth = depth
 		node.setNodeType(nodeType)
 		node.discard = false
 		nodes = append(nodes, node)
@@ -160,18 +159,26 @@ func (cm *chessMaster) search(value string) string {
 	}
 	score := _MIN_VALUE
 	var targetNode *chessBoardNode = nil
+	tempQueue := newMyList()
 	for waitForEvalQueue.Len() > 0 {
 		node := waitForEvalQueue.popFront()
+		tempQueue.PushBack(node)
 		nodeScore := node.getValue()
 		if nodeScore > score {
 			score = nodeScore
 			targetNode = node
 		}
 	}
+	for tempQueue.Len() > 0 {
+		node := tempQueue.popFront()
+		tempQueue.pushFrontSlice(node.children)
+		returnChessBoardNode(node)
+	}
 
 	if targetNode == nil {
 		log.Fatalln("search targetNode == nil...")
 	}
-	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f s", cm.depth, clipCount, anotherClipCount, targetNode.value, time.Since(st).Seconds())
+	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f, node:(%d-%d)", cm.depth, clipCount, anotherClipCount, targetNode.value, time.Since(st).Seconds(), _getNodeNum, _returnNodeNum)
+	clearChessBoardNodeCounter()
 	return targetNode.getCurrentChessBoard().string()
 }
