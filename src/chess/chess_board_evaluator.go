@@ -70,4 +70,3 @@ func (cbe *chessBoardEvaluator) evalPositionValue(chessBoard chessBoard) (int, i
 	}
 	return rResult, bResult
 }
-

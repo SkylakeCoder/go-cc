@@ -15,7 +15,6 @@ type move struct {
 }
 
 type chessBoardNode struct {
-	board    chessBoard
 	parent   *chessBoardNode
 	move     move
 	depth    int8
@@ -59,13 +58,11 @@ var _tempMoves = make([]move, 10)
 func (cbn *chessBoardNode) getCurrentChessBoard() chessBoard {
 	_tempMoves = _tempMoves[:0]
 	parentNode := cbn
-	var topNode *chessBoardNode
 	for parentNode != nil {
-		topNode = parentNode
 		_tempMoves = append(_tempMoves, parentNode.move)
 		parentNode = parentNode.parent
 	}
-	board := topNode.board.clone()
+	board := currentBoard.clone()
 	for i := len(_tempMoves) - 1; i >= 0; i-- {
 		move := _tempMoves[i]
 		newRow, newCol := move.newRow, move.newCol
