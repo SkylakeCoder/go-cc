@@ -10,11 +10,11 @@ type chessBoardEvaluator struct {
 
 }
 
-var chessPieceValueArray = []int {
+var chessPieceValueArray = []int16 {
 	0, 1000, 450, 450, 200, 200, 10000, 60,
 }
 
-var chessPiecePositionValueArray = [][][][]int {}
+var chessPiecePositionValueArray = [][][][]int16 {}
 
 func newChessBoardEvaluator(pvPath string) *chessBoardEvaluator {
 	evaluator := &chessBoardEvaluator{}
@@ -33,15 +33,15 @@ func (cbe *chessBoardEvaluator) loadPositionValueConfig(path string) {
 	}
 }
 
-func (cbe *chessBoardEvaluator) eval(chessBoard chessBoard) int {
+func (cbe *chessBoardEvaluator) eval(chessBoard chessBoard) int16 {
 	rv1, bv1 := cbe.evalPieceValue(chessBoard)
 	rv2, bv2 := cbe.evalPositionValue(chessBoard)
 	return (bv1 + bv2) - (rv1 + rv2)
 }
 
-func (cbe *chessBoardEvaluator) evalPieceValue(chessBoard chessBoard) (int, int) {
-	rResult := 0
-	bResult := 0
+func (cbe *chessBoardEvaluator) evalPieceValue(chessBoard chessBoard) (int16, int16) {
+	var rResult int16
+	var bResult int16
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			chess := chessBoard[row][col]
@@ -55,9 +55,9 @@ func (cbe *chessBoardEvaluator) evalPieceValue(chessBoard chessBoard) (int, int)
 	return rResult, bResult
 }
 
-func (cbe *chessBoardEvaluator) evalPositionValue(chessBoard chessBoard) (int, int) {
-	rResult := 0
-	bResult := 0
+func (cbe *chessBoardEvaluator) evalPositionValue(chessBoard chessBoard) (int16, int16) {
+	var rResult int16
+	var bResult int16
 	for row := 0; row < _BOARD_ROW; row++ {
 		for col := 0; col < _BOARD_COL; col++ {
 			chess := chessBoard[row][col]

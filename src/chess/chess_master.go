@@ -160,7 +160,7 @@ func (cm *chessMaster) search(value string) string {
 			node.parent.setValue(node.getValue(), node)
 		}
 	}
-	score := _MIN_VALUE
+	var score int16 = _MIN_VALUE
 	var targetNode *chessBoardNode = nil
 	tempQueue := newChessBoardNodeList()
 	for waitForEvalQueue.len() > 0 {
