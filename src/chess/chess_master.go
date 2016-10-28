@@ -91,13 +91,9 @@ func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, bo
 	return nodes
 }
 
-func (cm *chessMaster) isAllWaitForEvalNode(nodes *myList) bool {
-	for e := nodes.Front(); e != nil; e = e.Next() {
-		node, ok := e.Value.(*chessBoardNode)
-		if !ok {
-			log.Fatalln("wrong type in MyList...")
-		}
-		if node.parent != nil {
+func (cm *chessMaster) isAllWaitForEvalNode(nodes *chessBoardNodeList) bool {
+	for e := nodes.front(); e != nil; e = e.nextNode() {
+		if e.parent != nil {
 			return false
 		}
 	}
@@ -108,8 +104,8 @@ func (cm *chessMaster) search(value string) string {
 	st := time.Now()
 	cm.loadChessBoard(value)
 	cm.dump()
-	mainQueue := newMyList()
-	waitForEvalQueue := newMyList()
+	mainQueue := newChessBoardNodeList()
+	waitForEvalQueue := newChessBoardNodeList()
 	evaluator := newChessBoardEvaluator()
 	generator := newChessMovementGenerator()
 	moves := make([]move, 100)
@@ -119,7 +115,7 @@ func (cm *chessMaster) search(value string) string {
 	clipCount := 0
 	anotherClipCount := 0
 
-	for mainQueue.Len() > 0 {
+	for mainQueue.len() > 0 {
 		node := mainQueue.popFront()
 		if node.isDiscard() {
 			clipCount++
@@ -129,7 +125,7 @@ func (cm *chessMaster) search(value string) string {
 			continue
 		}
 		if node.depth < cm.depth {
-			waitForEvalQueue.PushFront(node)
+			waitForEvalQueue.pushFront(node)
 			nodeType := _NODE_TYPE_NULL
 			color := _COLOR_NULL
 			if node.nodeType == _NODE_TYPE_MIN {
@@ -147,23 +143,23 @@ func (cm *chessMaster) search(value string) string {
 			node.parent.setValue(v)
 		}
 	}
-	for waitForEvalQueue.Len() > 0 {
+	for waitForEvalQueue.len() > 0 {
 		if cm.isAllWaitForEvalNode(waitForEvalQueue) {
 			break
 		}
 		node := waitForEvalQueue.popFront()
 		if node.parent == nil {
-			waitForEvalQueue.PushBack(node)
+			waitForEvalQueue.pushBack(node)
 		} else {
 			node.parent.setValue(node.getValue())
 		}
 	}
 	score := _MIN_VALUE
 	var targetNode *chessBoardNode = nil
-	tempQueue := newMyList()
-	for waitForEvalQueue.Len() > 0 {
+	tempQueue := newChessBoardNodeList()
+	for waitForEvalQueue.len() > 0 {
 		node := waitForEvalQueue.popFront()
-		tempQueue.PushBack(node)
+		tempQueue.pushBack(node)
 		nodeScore := node.getValue()
 		if nodeScore > score {
 			score = nodeScore
@@ -174,7 +170,7 @@ func (cm *chessMaster) search(value string) string {
 		log.Fatalln("search targetNode == nil...")
 	}
 	result := targetNode.getCurrentChessBoard().string()
-	for tempQueue.Len() > 0 {
+	for tempQueue.len() > 0 {
 		node := tempQueue.popFront()
 		tempQueue.pushFrontSlice(node.children)
 		returnChessBoardNode(node)

@@ -27,30 +27,27 @@ type chessBoardNode struct {
 	next *chessBoardNode
 }
 
-var _chessBoardNodePoolHead *chessBoardNode = &chessBoardNode{}
+var _chessBoardNodeList *chessBoardNodeList = newChessBoardNodeList()
 const _POOL_INCREASE_NUM = 10000
 var _getNodeNum = 0
 var _returnNodeNum = 0
 
 func getChessBoardNode() *chessBoardNode {
 	_getNodeNum++
-	if _chessBoardNodePoolHead.next == nil {
+	if _chessBoardNodeList.len() == 0 {
 		for i := 0; i < _POOL_INCREASE_NUM; i++ {
 			newNode := &chessBoardNode {}
-			newNode.next = _chessBoardNodePoolHead.next
-			_chessBoardNodePoolHead.next = newNode
+			_chessBoardNodeList.pushBack(newNode)
 		}
 	}
-	node := _chessBoardNodePoolHead.next
-	_chessBoardNodePoolHead.next = _chessBoardNodePoolHead.next.next
+	node := _chessBoardNodeList.popFront()
 	return node
 }
 
 func returnChessBoardNode(node *chessBoardNode) {
 	_returnNodeNum++
 	node.children = []*chessBoardNode {}
-	node.next = _chessBoardNodePoolHead.next
-	_chessBoardNodePoolHead.next = node
+	_chessBoardNodeList.pushBack(node)
 }
 
 func clearChessBoardNodeCounter() {
@@ -141,4 +138,8 @@ func (cbn *chessBoardNode) isDiscard() bool {
 		temp = temp.parent
 	}
 	return false
+}
+
+func (cbn *chessBoardNode) nextNode() *chessBoardNode {
+	return cbn.next
 }
