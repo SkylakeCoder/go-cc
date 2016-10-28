@@ -24,30 +24,33 @@ type chessBoardNode struct {
 	children []*chessBoardNode
 	discard  bool
 	setValueCount int
+	next *chessBoardNode
 }
 
-var _chessBoardNodePool *myList = newMyList()
-const _POOL_INCREASE_NUM = 1000
+var _chessBoardNodePoolHead *chessBoardNode = &chessBoardNode{}
+const _POOL_INCREASE_NUM = 10000
 var _getNodeNum = 0
 var _returnNodeNum = 0
 
 func getChessBoardNode() *chessBoardNode {
 	_getNodeNum++
-	if _chessBoardNodePool.Len() <= 0 {
+	if _chessBoardNodePoolHead.next == nil {
 		for i := 0; i < _POOL_INCREASE_NUM; i++ {
-			node := &chessBoardNode {}
-			_chessBoardNodePool.PushBack(node)
+			newNode := &chessBoardNode {}
+			newNode.next = _chessBoardNodePoolHead.next
+			_chessBoardNodePoolHead.next = newNode
 		}
 	}
-	return _chessBoardNodePool.popFront()
+	node := _chessBoardNodePoolHead.next
+	_chessBoardNodePoolHead.next = _chessBoardNodePoolHead.next.next
+	return node
 }
 
 func returnChessBoardNode(node *chessBoardNode) {
 	_returnNodeNum++
-	node.setValueCount = 0
-	node.discard = false
 	node.children = []*chessBoardNode {}
-	_chessBoardNodePool.PushBack(node)
+	node.next = _chessBoardNodePoolHead.next
+	_chessBoardNodePoolHead.next = node
 }
 
 func clearChessBoardNodeCounter() {

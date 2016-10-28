@@ -82,6 +82,7 @@ func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, bo
 		node.depth = depth
 		node.setNodeType(nodeType)
 		node.discard = false
+		node.setValueCount = 0
 		nodes = append(nodes, node)
 	}
 	if parentNode != nil {
@@ -169,16 +170,16 @@ func (cm *chessMaster) search(value string) string {
 			targetNode = node
 		}
 	}
+	if targetNode == nil {
+		log.Fatalln("search targetNode == nil...")
+	}
+	result := targetNode.getCurrentChessBoard().string()
 	for tempQueue.Len() > 0 {
 		node := tempQueue.popFront()
 		tempQueue.pushFrontSlice(node.children)
 		returnChessBoardNode(node)
 	}
-
-	if targetNode == nil {
-		log.Fatalln("search targetNode == nil...")
-	}
 	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f, node:(%d-%d)", cm.depth, clipCount, anotherClipCount, targetNode.value, time.Since(st).Seconds(), _getNodeNum, _returnNodeNum)
 	clearChessBoardNodeCounter()
-	return targetNode.getCurrentChessBoard().string()
+	return result
 }
