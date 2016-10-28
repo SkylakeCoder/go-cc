@@ -9,6 +9,7 @@ import (
 )
 
 var depth = flag.Int("d", 4, "-d=num")
+var pvPath = flag.String("pvpath", "pv.json", "-pvpath=xxx")
 
 func main() {
 	flag.Parse()
@@ -16,5 +17,5 @@ func main() {
 	pprof.StartCPUProfile(f)
 	defer pprof.StopCPUProfile()
 	log.Println("depth=", *depth)
-	chess.StartServer(int8(*depth))
+	chess.StartServer(int8(*depth), *pvPath)
 }

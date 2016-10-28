@@ -13,12 +13,16 @@ var _debugFlag = true
 type chessMaster struct {
 	chessBoard chessBoard
 	depth int8
+	evaluator *chessBoardEvaluator
+	generator *chessMovementGenerator
 }
 
-func newChessMaster(depth int8) *chessMaster {
+func newChessMaster(depth int8, pvPath string) *chessMaster {
 	cm := &chessMaster{}
 	cm.depth = depth
 	cm.initChessBoard()
+	cm.evaluator = newChessBoardEvaluator(pvPath)
+	cm.generator = newChessMovementGenerator()
 	return cm
 }
 
@@ -109,11 +113,9 @@ func (cm *chessMaster) search(value string) string {
 	cm.dump()
 	mainQueue := newChessBoardNodeList()
 	waitForEvalQueue := newChessBoardNodeList()
-	evaluator := newChessBoardEvaluator()
-	generator := newChessMovementGenerator()
 	moves := make([]move, 100)
 	moves = moves[:0]
-	moves = generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
+	moves = cm.generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
 	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, cm.chessBoard, 1, _NODE_TYPE_MIN))
 	clipCount := 0
 	anotherClipCount := 0
@@ -139,10 +141,10 @@ func (cm *chessMaster) search(value string) string {
 				color = _COLOR_BLACK
 			}
 			moves = moves[:0]
-			moves = generator.generateMoves(node.getCurrentChessBoard(), color)
+			moves = cm.generator.generateMoves(node.getCurrentChessBoard(), color)
 			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, nil, node.depth + 1, nodeType))
 		} else {
-			v := evaluator.eval(node.getCurrentChessBoard())
+			v := cm.evaluator.eval(node.getCurrentChessBoard())
 			node.parent.setValue(v, node)
 		}
 	}
@@ -182,7 +184,7 @@ func (cm *chessMaster) search(value string) string {
 			if tmp.valueNodeForDebug == nil {
 				fmt.Println("---：")
 				fmt.Println(tmp.getCurrentChessBoard().dumpString())
-				fmt.Println(evaluator.eval(tmp.getCurrentChessBoard()))
+				fmt.Println(cm.evaluator.eval(tmp.getCurrentChessBoard()))
 			}
 			tmp = tmp.valueNodeForDebug
 		}
