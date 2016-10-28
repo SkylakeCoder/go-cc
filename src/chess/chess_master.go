@@ -5,7 +5,10 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"fmt"
 )
+
+var _debugFlag = true
 
 type chessMaster struct {
 	chessBoard chessBoard
@@ -140,7 +143,7 @@ func (cm *chessMaster) search(value string) string {
 			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, nil, node.depth + 1, nodeType))
 		} else {
 			v := evaluator.eval(node.getCurrentChessBoard())
-			node.parent.setValue(v)
+			node.parent.setValue(v, node)
 		}
 	}
 	for waitForEvalQueue.len() > 0 {
@@ -151,7 +154,7 @@ func (cm *chessMaster) search(value string) string {
 		if node.parent == nil {
 			waitForEvalQueue.pushBack(node)
 		} else {
-			node.parent.setValue(node.getValue())
+			node.parent.setValue(node.getValue(), node)
 		}
 	}
 	score := _MIN_VALUE
@@ -170,12 +173,27 @@ func (cm *chessMaster) search(value string) string {
 		log.Fatalln("search targetNode == nil...")
 	}
 	result := targetNode.getCurrentChessBoard().string()
+	resultValue := targetNode.value
+	if _debugFlag {
+		fmt.Println("+++++++++++++++++++++++++++++++++")
+		tmp := targetNode
+		for tmp != nil {
+			fmt.Println(tmp.getCurrentChessBoard().dumpString())
+			if tmp.valueNodeForDebug == nil {
+				fmt.Println("---：")
+				fmt.Println(tmp.getCurrentChessBoard().dumpString())
+				fmt.Println(evaluator.eval(tmp.getCurrentChessBoard()))
+			}
+			tmp = tmp.valueNodeForDebug
+		}
+		fmt.Println("+++++++++++++++++++++++++++++++++")
+	}
 	for tempQueue.len() > 0 {
 		node := tempQueue.popFront()
 		tempQueue.pushFrontSlice(node.children)
 		returnChessBoardNode(node)
 	}
-	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f, node:(%d-%d)", cm.depth, clipCount, anotherClipCount, targetNode.value, time.Since(st).Seconds(), _getNodeNum, _returnNodeNum)
+	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f, node:(%d-%d)", cm.depth, clipCount, anotherClipCount, resultValue, time.Since(st).Seconds(), _getNodeNum, _returnNodeNum)
 	clearChessBoardNodeCounter()
 	return result
 }

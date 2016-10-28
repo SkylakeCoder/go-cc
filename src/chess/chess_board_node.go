@@ -20,6 +20,7 @@ type chessBoardNode struct {
 	move     move
 	depth    int8
 	value    int
+	valueNodeForDebug *chessBoardNode
 	nodeType nodeType
 	children []*chessBoardNode
 	discard  bool
@@ -86,21 +87,20 @@ func (cbn *chessBoardNode) setNodeType(nodeType nodeType) {
 	}
 }
 
-func (cbn *chessBoardNode) setValue(v int) {
+func (cbn *chessBoardNode) setValue(v int, nodeForDebug *chessBoardNode) {
 	cbn.setValueCount++
-	isValidValue := false
 	if cbn.nodeType == _NODE_TYPE_MAX {
 		if v > cbn.value {
 			cbn.value = v
-			isValidValue = true
+			cbn.valueNodeForDebug = nodeForDebug
 		}
 	} else {
 		if v < cbn.value {
 			cbn.value = v
-			isValidValue = true
+			cbn.valueNodeForDebug = nodeForDebug
 		}
 	}
-	if isValidValue && cbn.parent != nil {
+	if cbn.parent != nil {
 		brothers := cbn.parent.children
 		if cbn.parent.nodeType == _NODE_TYPE_MIN {
 			for _, v := range brothers {
@@ -117,9 +117,13 @@ func (cbn *chessBoardNode) setValue(v int) {
 				}
 			}
 		}
-		if cbn.setValueCount >= len(cbn.children) || cbn.discard {
-			if cbn.parent.parent != nil {
-				cbn.parent.setValue(v)
+		if cbn.setValueCount >= len(cbn.children) {
+			cbn.parent.setValue(cbn.value, cbn)
+		} else if cbn.isDiscard() {
+			if cbn.parent.nodeType == _NODE_TYPE_MAX {
+				cbn.parent.setValue(_MIN_VALUE, cbn)
+			} else {
+				cbn.parent.setValue(_MAX_VALUE, cbn)
 			}
 		}
 	}
