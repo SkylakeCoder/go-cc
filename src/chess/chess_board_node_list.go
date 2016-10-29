@@ -1,9 +1,11 @@
 package chess
 
+import "log"
+
 type chessBoardNodeList struct {
 	head *chessBoardNode
 	tail *chessBoardNode
-	num uint64
+	num int64
 }
 
 func newChessBoardNodeList() *chessBoardNodeList {
@@ -19,6 +21,7 @@ func (cbnl *chessBoardNodeList) pushBack(node *chessBoardNode) {
 		cbnl.tail.next = node
 	}
 	cbnl.tail = node
+	node.next = nil
 	cbnl.num++
 }
 
@@ -37,6 +40,18 @@ func (cbnl *chessBoardNodeList) pushFrontSlice(slice []*chessBoardNode) {
 	}
 }
 
+func (cbnl *chessBoardNodeList) pushFrontList(list *chessBoardNodeList) {
+	if list == nil || list.tail == nil {
+		log.Fatalln("pushFrontList failed...")
+	}
+	list.tail.next = cbnl.head.next
+	cbnl.head.next = list.head.next
+	cbnl.num += list.num
+	if cbnl.tail == nil {
+		cbnl.tail = list.tail
+	}
+}
+
 func (cbnl *chessBoardNodeList) popFront() *chessBoardNode {
 	var node *chessBoardNode
 	if cbnl.head.next != nil {
@@ -51,10 +66,16 @@ func (cbnl *chessBoardNodeList) popFront() *chessBoardNode {
 	return node
 }
 
-func (cbnl *chessBoardNodeList) len() uint64 {
+func (cbnl *chessBoardNodeList) len() int64 {
 	return cbnl.num
 }
 
 func (cbnl *chessBoardNodeList) front() *chessBoardNode {
 	return cbnl.head.next
+}
+
+func (cbnl *chessBoardNodeList) clear() {
+	cbnl.head.next = nil
+	cbnl.tail = nil
+	cbnl.num = 0
 }

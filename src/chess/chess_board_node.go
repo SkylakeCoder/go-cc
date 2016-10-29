@@ -1,5 +1,9 @@
 package chess
 
+import (
+	"fmt"
+)
+
 type nodeType byte
 const (
 	_NODE_TYPE_NULL nodeType = iota
@@ -21,22 +25,25 @@ type chessBoardNode struct {
 	value    int16
 	valueNodeForDebug *chessBoardNode
 	nodeType nodeType
-	children []*chessBoardNode
+	children *chessBoardNodeList
 	discard  bool
-	setValueCount int16
+	setValueCount uint16
 	next *chessBoardNode
 }
 
 var _chessBoardNodeList *chessBoardNodeList = newChessBoardNodeList()
-const _POOL_INCREASE_NUM = 10000
+const _POOL_INCREASE_NUM = 50000000
 var _getNodeNum = 0
 var _returnNodeNum = 0
 
 func getChessBoardNode() *chessBoardNode {
 	_getNodeNum++
-	if _chessBoardNodeList.len() == 0 {
+	if _chessBoardNodeList.len() <= 0 {
+		fmt.Println("realloc node......node num:", _getNodeNum)
 		for i := 0; i < _POOL_INCREASE_NUM; i++ {
-			newNode := &chessBoardNode {}
+			newNode := &chessBoardNode {
+				next: nil,
+			}
 			_chessBoardNodeList.pushBack(newNode)
 		}
 	}
@@ -46,7 +53,9 @@ func getChessBoardNode() *chessBoardNode {
 
 func returnChessBoardNode(node *chessBoardNode) {
 	_returnNodeNum++
-	node.children = []*chessBoardNode {}
+	if node.children != nil {
+		//!--node.children.clear()
+	}
 	_chessBoardNodeList.pushBack(node)
 }
 
@@ -100,21 +109,23 @@ func (cbn *chessBoardNode) setValue(v int16, nodeForDebug *chessBoardNode) {
 	if cbn.parent != nil {
 		brothers := cbn.parent.children
 		if cbn.parent.nodeType == _NODE_TYPE_MIN {
-			for _, v := range brothers {
-				if v.value != _MIN_VALUE && v.value < cbn.value {
+			//for _, v := range brothers {
+			for e := brothers.front(); e != nil; e = e.next {
+				if e.value != _MIN_VALUE && e.value < cbn.value {
 					cbn.discard = true
 					break
 				}
 			}
 		} else {
-			for _, v := range brothers {
-				if v.value != _MAX_VALUE && v.value > cbn.value {
+			//for _, v := range brothers {
+			for e := brothers.front(); e != nil; e = e.next {
+				if e.value != _MAX_VALUE && e.value > cbn.value {
 					cbn.discard = true
 					break
 				}
 			}
 		}
-		if cbn.setValueCount >= int16(len(cbn.children)) {
+		if int64(cbn.setValueCount) >= cbn.children.len() {
 			cbn.parent.setValue(cbn.value, cbn)
 		} else if cbn.isDiscard() {
 			if cbn.parent.nodeType == _NODE_TYPE_MAX {

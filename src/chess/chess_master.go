@@ -79,9 +79,10 @@ func (cm *chessMaster) dump() {
 	cm.chessBoard.dump()
 }
 
-func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, depth int8, nodeType nodeType) []*chessBoardNode {
-	nodes := make([]*chessBoardNode, 100)
-	nodes = nodes[:0]
+func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, depth int8, nodeType nodeType) *chessBoardNodeList {
+	//nodes := make([]*chessBoardNode, 100)
+	//nodes = nodes[:0]
+	nodes := newChessBoardNodeList()
 	for _, v := range moves {
 		node := getChessBoardNode()
 		node.move = v
@@ -90,7 +91,8 @@ func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, de
 		node.setNodeType(nodeType)
 		node.discard = false
 		node.setValueCount = 0
-		nodes = append(nodes, node)
+		//nodes = append(nodes, node)
+		nodes.pushBack(node)
 	}
 	if parentNode != nil {
 		parentNode.children = nodes
@@ -117,7 +119,7 @@ func (cm *chessMaster) search(value string) string {
 	moves := make([]move, 100)
 	moves = moves[:0]
 	moves = cm.generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
-	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
+	mainQueue.pushFrontList(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
 	clipCount := 0
 	anotherClipCount := 0
 
@@ -143,7 +145,7 @@ func (cm *chessMaster) search(value string) string {
 			}
 			moves = moves[:0]
 			moves = cm.generator.generateMoves(node.getCurrentChessBoard(), color)
-			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
+			mainQueue.pushFrontList(cm.convertMoves(moves, node, node.depth + 1, nodeType))
 		} else {
 			v := cm.evaluator.eval(node.getCurrentChessBoard())
 			node.parent.setValue(v, node)
@@ -193,7 +195,13 @@ func (cm *chessMaster) search(value string) string {
 	}
 	for tempQueue.len() > 0 {
 		node := tempQueue.popFront()
-		tempQueue.pushFrontSlice(node.children)
+		if node == nil {
+			log.Fatal("what the xx?...")
+			continue
+		}
+		if node.children != nil {
+			tempQueue.pushFrontList(node.children)
+		}
 		returnChessBoardNode(node)
 	}
 	log.Printf("depth: %d, clip1: %d, clip2: %d, value: %d, time cost: %f, node:(%d-%d)", cm.depth, clipCount, anotherClipCount, resultValue, time.Since(st).Seconds(), _getNodeNum, _returnNodeNum)
