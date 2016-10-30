@@ -36,7 +36,11 @@ func (cbe *chessBoardEvaluator) loadPositionValueConfig(path string) {
 func (cbe *chessBoardEvaluator) eval(chessBoard chessBoard) int16 {
 	rv1, bv1 := cbe.evalPieceValue(chessBoard)
 	rv2, bv2 := cbe.evalPositionValue(chessBoard)
-	return (bv1 + bv2) - (rv1 + rv2)
+	result := (bv1 + bv2) - (rv1 + rv2)
+	if result <= _MIN_VALUE || result >= _MAX_VALUE {
+		log.Fatalln("evaluation value overflow...", result)
+	}
+	return result
 }
 
 func (cbe *chessBoardEvaluator) evalPieceValue(chessBoard chessBoard) (int16, int16) {
