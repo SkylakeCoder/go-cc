@@ -15,16 +15,16 @@ type move struct {
 }
 
 type chessBoardNode struct {
-	parent   *chessBoardNode
-	move     move
+	move move
 	depth    int8
-	value    int16
-	valueNodeForDebug *chessBoardNode
-	nodeType nodeType
-	children []*chessBoardNode
 	discard  bool
+	nodeType nodeType
+	value    int16
 	setValueCount uint16
+	valueNodeForDebug *chessBoardNode
 	next *chessBoardNode
+	parent *chessBoardNode
+	children []*chessBoardNode
 }
 
 var _chessBoardNodeList *chessBoardNodeList = newChessBoardNodeList()
