@@ -79,20 +79,21 @@ func (cm *chessMaster) dump() {
 	cm.chessBoard.dump()
 }
 
-func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, depth int8, nodeType nodeType) *chessBoardNodeList {
-	//nodes := make([]*chessBoardNode, 100)
-	//nodes = nodes[:0]
-	nodes := newChessBoardNodeList()
+func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, depth int8, nodeType nodeType) []*chessBoardNode {
+	nodes := make([]*chessBoardNode, 100)
+	nodes = nodes[:0]
 	for _, v := range moves {
 		node := getChessBoardNode()
+		if node.children != nil {
+			node.children = []*chessBoardNode {}
+		}
 		node.move = v
 		node.parent = parentNode
 		node.depth = depth
 		node.setNodeType(nodeType)
 		node.discard = false
 		node.setValueCount = 0
-		//nodes = append(nodes, node)
-		nodes.pushBack(node)
+		nodes = append(nodes, node)
 	}
 	if parentNode != nil {
 		parentNode.children = nodes
@@ -101,7 +102,7 @@ func (cm *chessMaster) convertMoves(moves []move, parentNode *chessBoardNode, de
 }
 
 func (cm *chessMaster) isAllWaitForEvalNode(nodes *chessBoardNodeList) bool {
-	for e := nodes.front(); e != nil; e = e.nextNode() {
+	for e := nodes.front(); e != nil; e = e.next {
 		if e.parent != nil {
 			return false
 		}
@@ -119,7 +120,7 @@ func (cm *chessMaster) search(value string) string {
 	moves := make([]move, 100)
 	moves = moves[:0]
 	moves = cm.generator.generateMoves(cm.chessBoard, _COLOR_BLACK)
-	mainQueue.pushFrontList(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
+	mainQueue.pushFrontSlice(cm.convertMoves(moves, nil, 1, _NODE_TYPE_MIN))
 	clipCount := 0
 	anotherClipCount := 0
 
@@ -145,9 +146,12 @@ func (cm *chessMaster) search(value string) string {
 			}
 			moves = moves[:0]
 			moves = cm.generator.generateMoves(node.getCurrentChessBoard(), color)
-			mainQueue.pushFrontList(cm.convertMoves(moves, node, node.depth + 1, nodeType))
+			mainQueue.pushFrontSlice(cm.convertMoves(moves, node, node.depth + 1, nodeType))
 		} else {
 			v := cm.evaluator.eval(node.getCurrentChessBoard())
+			if v <= _MIN_VALUE || v >= _MAX_VALUE {
+				log.Fatalln("value overflow...")
+			}
 			node.parent.setValue(v, node)
 		}
 	}
@@ -163,13 +167,13 @@ func (cm *chessMaster) search(value string) string {
 		}
 	}
 	var score int16 = _MIN_VALUE
-	var targetNode *chessBoardNode = nil
+ 	var targetNode *chessBoardNode = nil
 	tempQueue := newChessBoardNodeList()
 	for waitForEvalQueue.len() > 0 {
 		node := waitForEvalQueue.popFront()
 		tempQueue.pushBack(node)
 		nodeScore := node.getValue()
-		if nodeScore > score {
+		if nodeScore != _MAX_VALUE && nodeScore > score {
 			score = nodeScore
 			targetNode = node
 		}
@@ -196,11 +200,11 @@ func (cm *chessMaster) search(value string) string {
 	for tempQueue.len() > 0 {
 		node := tempQueue.popFront()
 		if node == nil {
-			log.Fatal("what the xx?...")
-			continue
+			log.Println("what the xx?...tempQueue.len=", tempQueue.len())
+			break
 		}
 		if node.children != nil {
-			tempQueue.pushFrontList(node.children)
+			tempQueue.pushFrontSlice(node.children)
 		}
 		returnChessBoardNode(node)
 	}

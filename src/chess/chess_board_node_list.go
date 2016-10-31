@@ -25,25 +25,7 @@ func (cbnl *chessBoardNodeList) pushBack(node *chessBoardNode) {
 	cbnl.num++
 }
 
-func (cbnl *chessBoardNodeList) pushFront(node *chessBoardNode) {
-	node.next = cbnl.head.next
-	cbnl.head.next = node
-	if cbnl.tail == nil {
-		cbnl.tail = node
-	}
-	cbnl.num++
-}
-
-func (cbnl *chessBoardNodeList) pushFrontSlice(slice []*chessBoardNode) {
-	for i := len(slice) - 1; i >= 0; i-- {
-		cbnl.pushFront(slice[i])
-	}
-}
-
 func (cbnl *chessBoardNodeList) pushFrontList(list *chessBoardNodeList) {
-	if list == nil || list.tail == nil {
-		log.Fatalln("pushFrontList failed...")
-	}
 	list.tail.next = cbnl.head.next
 	cbnl.head.next = list.head.next
 	cbnl.num += list.num
@@ -52,21 +34,47 @@ func (cbnl *chessBoardNodeList) pushFrontList(list *chessBoardNodeList) {
 	}
 }
 
+func (cbnl *chessBoardNodeList) pushFrontSlice(slice []*chessBoardNode) {
+	for i := len(slice) - 1; i >= 0; i-- {
+		cbnl.pushFront(slice[i])
+	}
+}
+
+func (cbnl *chessBoardNodeList) pushFront(node *chessBoardNode) {
+	node.next = cbnl.head.next
+	cbnl.head.next = node
+	cbnl.num++
+	if cbnl.tail == nil {
+		cbnl.tail = node
+	}
+}
+
 func (cbnl *chessBoardNodeList) popFront() *chessBoardNode {
 	var node *chessBoardNode
+	if cbnl.num > 0 && cbnl.head.next == nil {
+		log.Fatalln("popFront failed. cbnl.num = ", cbnl.num, "| cbnl.head.next = ", cbnl.head.next)
+	}
 	if cbnl.head.next != nil {
 		node = cbnl.head.next
 		cbnl.head.next = cbnl.head.next.next
 		node.next = nil
-		if node == cbnl.tail {
+		cbnl.num--
+		if cbnl.num <= 0 {
 			cbnl.tail = nil
 		}
-		cbnl.num--
+		if cbnl.head.next == nil && cbnl.num > 0 {
+			log.Fatalln("popFront failed...cbnl.num = ", cbnl.num)
+		}
+	} else {
+		log.Fatalln("empty...")
 	}
 	return node
 }
 
 func (cbnl *chessBoardNodeList) len() int64 {
+	if cbnl.num < 0 {
+		log.Fatalln("len < 0...")
+	}
 	return cbnl.num
 }
 
